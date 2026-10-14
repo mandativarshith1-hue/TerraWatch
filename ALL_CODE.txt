@@ -1,0 +1,4655 @@
+//=== FILE: index.html ===
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TerraWatch — Climate Risk & Disaster Response</title>
+    <meta property="og:image" content="https://bolt.new/static/og_default.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://bolt.new/static/og_default.png" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
+
+//=== FILE: vite.config.ts ===
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { fileURLToPath, URL } from 'node:url';
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
+  optimizeDeps: {
+    exclude: ['lucide-react'],
+  },
+});
+
+
+//=== FILE: tailwind.config.js ===
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+
+
+//=== FILE: postcss.config.js ===
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+
+
+//=== FILE: eslint.config.js ===
+import js from '@eslint/js';
+import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import tseslint from 'typescript-eslint';
+
+export default tseslint.config(
+  { ignores: ['dist'] },
+  {
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+    },
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+    },
+  }
+);
+
+
+//=== FILE: tsconfig.json ===
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}
+
+
+//=== FILE: tsconfig.app.json ===
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Path alias — depth-invariant imports for src (@/foo === src/foo from any file) */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"]
+}
+
+
+//=== FILE: tsconfig.node.json ===
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["vite.config.ts"]
+}
+
+
+//=== FILE: src/main.tsx ===
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);
+
+
+//=== FILE: src/vite-env.d.ts ===
+/// <reference types="vite/client" />
+
+
+//=== FILE: src/index.css ===
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #0a0f1e;
+  --bg-secondary: #0f172a;
+  --bg-tertiary: #1e293b;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --border-color: rgba(255, 255, 255, 0.1);
+}
+
+html.light-mode {
+  --bg-primary: #e2e8f0;
+  --bg-secondary: #f1f5f9;
+  --bg-tertiary: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border-color: rgba(0, 0, 0, 0.1);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+html.light-mode * {
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+html.light-mode *::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+
+//=== FILE: src/types/index.ts ===
+export type RiskLevel = "low" | "moderate" | "high" | "severe";
+
+export type HazardType =
+  | "flood"
+  | "heatwave"
+  | "cyclone"
+  | "extremeRainfall"
+  | "earthquake"
+  | "wildfire"
+  | "volcano"
+  | "landslide"
+  | "drought"
+  | "coldWave"
+  | "tsunami";
+
+export type AlertSource =
+  | "open-meteo"
+  | "usgs"
+  | "eonet"
+  | "nws"
+  | "gdacs"
+  | "derived"
+  | "simulation";
+
+export type AlertSeverity = "advisory" | "watch" | "warning" | "emergency";
+
+export interface LatLon {
+  lat: number;
+  lon: number;
+}
+
+export interface CityLocation extends LatLon {
+  id: string;
+  name: string;
+  country: string;
+}
+
+export interface WeatherCurrent {
+  temperature: number;
+  apparentTemperature: number;
+  precipitation: number;
+  rain: number;
+  windSpeed: number;
+  windGusts: number;
+  pressure: number;
+  humidity: number;
+  visibility: number;
+  cloudCover: number;
+  weatherCode: number;
+  isDay: boolean;
+  time: string;
+}
+
+export interface HourlyForecast {
+  time: string[];
+  temperature: number[];
+  precipitation: number[];
+  rain: number[];
+  windSpeed: number[];
+  windGusts: number[];
+  visibility: number[];
+  pressure: number[];
+  humidity: number[];
+  cloudCover: number[];
+  weatherCode: number[];
+}
+
+export interface DailyForecast {
+  time?: string[];
+  temperatureMax: number[];
+  temperatureMin: number[];
+  precipitationSum: number[];
+  rainSum: number[];
+  windSpeedMax: number[];
+  windGustsMax: number[];
+  weatherCode: number[];
+  sunrise: string[];
+  sunset: string[];
+  uvIndexMax: number[];
+}
+
+export interface WeatherData {
+  current: WeatherCurrent;
+  hourly: HourlyForecast;
+  daily: DailyForecast;
+  timezone: string;
+  fetchedAt: number;
+}
+
+export interface HistoricalData {
+  dates: string[];
+  rainfall: number[];
+  temperature: number[];
+  source: string;
+}
+
+export interface RiskIndicator {
+  name: string;
+  value: string;
+  contribution: number;
+  maxContribution: number;
+  description: string;
+}
+
+export interface RiskAssessment {
+  hazard: HazardType;
+  score: number;
+  level: RiskLevel;
+  indicators: RiskIndicator[];
+}
+
+export interface DisasterEvent {
+  id: string;
+  type: HazardType;
+  title: string;
+  description: string;
+  location: string;
+  lat: number;
+  lon: number;
+  severity: AlertSeverity;
+  source: AlertSource;
+  sourceUrl?: string;
+  time: string;
+  magnitude?: number;
+  depth?: number;
+  tsunamiWarning?: boolean;
+  affectedArea?: string;
+  affectedPopulation?: string;
+  alertLevel?: RiskLevel;
+  sourceLabel?: string;
+  riskLevel?: RiskLevel;
+  raw?: unknown;
+}
+
+export interface UnifiedAlert {
+  id: string;
+  type: HazardType | "official";
+  title: string;
+  description: string;
+  severity: AlertSeverity;
+  riskLevel: RiskLevel;
+  source: AlertSource;
+  sourceLabel: string;
+  sourceUrl?: string;
+  time: string;
+  lat: number;
+  lon: number;
+  location: string;
+  instructions?: string;
+  expiry?: string;
+}
+
+export interface SafetyGuidance {
+  before: string[];
+  during: string[];
+  after: string[];
+}
+
+export interface EmergencyContact {
+  name: string;
+  number: string;
+  description: string;
+}
+
+export type ThemeMode = "dark" | "light";
+
+export type ViewMode = "live" | "simulation";
+
+export type ScenarioId =
+  | "live"
+  | "chennai-cyclone"
+  | "assam-flood"
+  | "delhi-heatwave"
+  | "mumbai-rainfall"
+  | "himalayan-earthquake";
+
+export interface ScenarioData {
+  id: ScenarioId;
+  name: string;
+  description: string;
+  centerLat: number;
+  centerLon: number;
+  zoom: number;
+  events: DisasterEvent[];
+  alerts: UnifiedAlert[];
+  weather: WeatherData;
+  riskAssessments: RiskAssessment[];
+  timelineHours: number;
+  timelineData: TimelineFrame[];
+}
+
+export interface TimelineFrame {
+  hour: number;
+  label: string;
+  weather: Partial<WeatherCurrent>;
+  riskScores: Partial<Record<HazardType, number>>;
+  alertLevel: RiskLevel;
+}
+
+export interface PreparednessItem {
+  id: string;
+  label: string;
+  done: boolean;
+}
+
+
+//=== FILE: src/context/ThemeContext.tsx ===
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import type { ThemeMode } from "@/types";
+
+interface ThemeContextValue {
+  mode: ThemeMode;
+  toggle: () => void;
+  setMode: (mode: ThemeMode) => void;
+}
+
+const ThemeContext = createContext<ThemeContextValue | null>(null);
+
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const [mode, setMode] = useState<ThemeMode>(() => {
+    const saved = localStorage.getItem("terrwatch-theme");
+    return (saved as ThemeMode) ?? "dark";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("terrwatch-theme", mode);
+    document.documentElement.classList.toggle("light-mode", mode === "light");
+  }, [mode]);
+
+  const toggle = () => setMode((m) => (m === "dark" ? "light" : "dark"));
+
+  return <ThemeContext.Provider value={{ mode, toggle, setMode }}>{children}</ThemeContext.Provider>;
+}
+
+export function useTheme() {
+  const ctx = useContext(ThemeContext);
+  if (!ctx) throw new Error("useTheme must be used within ThemeProvider");
+  return ctx;
+}
+
+
+//=== FILE: src/context/LocationContext.tsx ===
+import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import type { LatLon, CityLocation } from "@/types";
+
+interface LocationContextValue {
+  selectedLocation: (CityLocation & { isCustom?: boolean }) | null;
+  setSelectedLocation: (loc: (CityLocation & { isCustom?: boolean }) | null) => void;
+  flyTo: LatLon | null;
+  setFlyTo: (latlon: LatLon | null) => void;
+  watchlist: CityLocation[];
+  toggleWatchlist: (city: CityLocation) => void;
+  isWatched: (id: string) => boolean;
+}
+
+const LocationContext = createContext<LocationContextValue | null>(null);
+
+export function LocationProvider({ children }: { children: ReactNode }) {
+  const [selectedLocation, setSelectedLocation] = useState<(CityLocation & { isCustom?: boolean }) | null>(null);
+  const [flyTo, setFlyTo] = useState<LatLon | null>(null);
+  const [watchlist, setWatchlist] = useState<CityLocation[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem("terrwatch-watchlist") ?? "[]");
+    } catch {
+      return [];
+    }
+  });
+
+  const toggleWatchlist = useCallback((city: CityLocation) => {
+    setWatchlist((prev) => {
+      const exists = prev.some((c) => c.id === city.id);
+      const next = exists ? prev.filter((c) => c.id !== city.id) : [...prev, city];
+      localStorage.setItem("terrwatch-watchlist", JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const isWatched = useCallback((id: string) => watchlist.some((c) => c.id === id), [watchlist]);
+
+  return (
+    <LocationContext.Provider
+      value={{ selectedLocation, setSelectedLocation, flyTo, setFlyTo, watchlist, toggleWatchlist, isWatched }}
+    >
+      {children}
+    </LocationContext.Provider>
+  );
+}
+
+export function useLocation() {
+  const ctx = useContext(LocationContext);
+  if (!ctx) throw new Error("useLocation must be used within LocationProvider");
+  return ctx;
+}
+
+
+//=== FILE: src/data/cities.ts ===
+import type { CityLocation, HazardType, SafetyGuidance, EmergencyContact } from "@/types";
+
+export const CITIES: CityLocation[] = [
+  { id: "chennai", name: "Chennai", country: "India", lat: 13.0827, lon: 80.2707 },
+  { id: "mumbai", name: "Mumbai", country: "India", lat: 19.076, lon: 72.8777 },
+  { id: "kolkata", name: "Kolkata", country: "India", lat: 22.5726, lon: 88.3639 },
+  { id: "delhi", name: "Delhi", country: "India", lat: 28.6139, lon: 77.209 },
+  { id: "guwahati", name: "Guwahati", country: "India", lat: 26.1445, lon: 91.7362 },
+  { id: "bhubaneswar", name: "Bhubaneswar", country: "India", lat: 20.296, lon: 85.8245 },
+  { id: "bangalore", name: "Bangalore", country: "India", lat: 12.9716, lon: 77.5946 },
+  { id: "hyderabad", name: "Hyderabad", country: "India", lat: 17.385, lon: 78.4867 },
+  { id: "new-york", name: "New York", country: "USA", lat: 40.7128, lon: -74.006 },
+  { id: "los-angeles", name: "Los Angeles", country: "USA", lat: 34.0522, lon: -118.2437 },
+  { id: "london", name: "London", country: "UK", lat: 51.5074, lon: -0.1278 },
+  { id: "tokyo", name: "Tokyo", country: "Japan", lat: 35.6762, lon: 139.6503 },
+  { id: "jakarta", name: "Jakarta", country: "Indonesia", lat: -6.2088, lon: 106.8456 },
+  { id: "sydney", name: "Sydney", country: "Australia", lat: -33.8688, lon: 151.2093 },
+  { id: "manila", name: "Manila", country: "Philippines", lat: 14.5995, lon: 120.9842 },
+  { id: "mexico-city", name: "Mexico City", country: "Mexico", lat: 19.4326, lon: -99.1332 },
+  { id: "sao-paulo", name: "São Paulo", country: "Brazil", lat: -23.5505, lon: -46.6333 },
+  { id: "cairo", name: "Cairo", country: "Egypt", lat: 30.0444, lon: 31.2357 },
+  { id: "dhaka", name: "Dhaka", country: "Bangladesh", lat: 23.8103, lon: 90.4125 },
+  { id: "singapore", name: "Singapore", country: "Singapore", lat: 1.3521, lon: 103.8198 },
+];
+
+export const HAZARD_META: Record<
+  HazardType,
+  { label: string; icon: string; colors: Record<string, string>; layerToggle: string }
+> = {
+  flood: { label: "Flood", icon: "Waves", colors: { low: "#22c55e", moderate: "#eab308", high: "#f97316", severe: "#ef4444" }, layerToggle: "Flood Risk" },
+  heatwave: { label: "Heatwave", icon: "ThermometerSun", colors: { low: "#22c55e", moderate: "#eab308", high: "#f97316", severe: "#ef4444" }, layerToggle: "Heatwave" },
+  cyclone: { label: "Cyclone/Wind", icon: "Wind", colors: { low: "#22c55e", moderate: "#eab308", high: "#f97316", severe: "#ef4444" }, layerToggle: "Cyclone/Wind" },
+  extremeRainfall: { label: "Extreme Rainfall", icon: "CloudRain", colors: { low: "#22c55e", moderate: "#eab308", high: "#f97316", severe: "#ef4444" }, layerToggle: "Extreme Rainfall" },
+  earthquake: { label: "Earthquake", icon: "Activity", colors: { low: "#22c55e", moderate: "#eab308", high: "#f97316", severe: "#ef4444" }, layerToggle: "Earthquakes" },
+  wildfire: { label: "Wildfire", icon: "Flame", colors: { low: "#22c55e", moderate: "#eab308", high: "#f97316", severe: "#ef4444" }, layerToggle: "Wildfires" },
+  volcano: { label: "Volcano", icon: "Mountain", colors: { low: "#22c55e", moderate: "#eab308", high: "#f97316", severe: "#ef4444" }, layerToggle: "Volcanoes" },
+  landslide: { label: "Landslide", icon: "TrendingDown", colors: { low: "#22c55e", moderate: "#eab308", high: "#f97316", severe: "#ef4444" }, layerToggle: "Landslides" },
+  drought: { label: "Drought", icon: "Sun", colors: { low: "#22c55e", moderate: "#eab308", high: "#f97316", severe: "#ef4444" }, layerToggle: "Drought" },
+  coldWave: { label: "Cold Wave", icon: "Snowflake", colors: { low: "#22c55e", moderate: "#eab308", high: "#f97316", severe: "#ef4444" }, layerToggle: "Cold Wave" },
+  tsunami: { label: "Tsunami", icon: "Waves", colors: { low: "#22c55e", moderate: "#eab308", high: "#f97316", severe: "#ef4444" }, layerToggle: "Tsunami" },
+};
+
+export const RISK_LEVEL_META = {
+  low: { label: "Low", color: "#22c55e", bgColor: "bg-green-500/20", textColor: "text-green-400", borderColor: "border-green-500/40" },
+  moderate: { label: "Moderate", color: "#eab308", bgColor: "bg-yellow-500/20", textColor: "text-yellow-400", borderColor: "border-yellow-500/40" },
+  high: { label: "High", color: "#f97316", bgColor: "bg-orange-500/20", textColor: "text-orange-400", borderColor: "border-orange-500/40" },
+  severe: { label: "Severe", color: "#ef4444", bgColor: "bg-red-500/20", textColor: "text-red-400", borderColor: "border-red-500/40" },
+} as const;
+
+export const SEVERITY_META = {
+  advisory: { label: "Advisory", color: "#3b82f6" },
+  watch: { label: "Watch", color: "#eab308" },
+  warning: { label: "Warning", color: "#f97316" },
+  emergency: { label: "Emergency", color: "#ef4444" },
+} as const;
+
+export const SAFETY_GUIDANCE: Record<HazardType, SafetyGuidance> = {
+  flood: {
+    before: ["Move valuables to higher floors", "Prepare an emergency kit with documents, water, and food", "Know your local evacuation routes", "Keep emergency contact numbers handy"],
+    during: ["Do not walk or drive through flood waters", "Move to higher ground immediately", "Turn off electricity and gas", "Stay tuned to local radio for updates"],
+    after: ["Wait for official all-clear before returning home", "Check for structural damage before entering buildings", "Boil water before drinking", "Document damage for insurance claims"],
+  },
+  heatwave: {
+    before: ["Stock up on water and oral rehydration salts", "Check on elderly and vulnerable neighbors", "Prepare cooling options: fans, wet cloths", "Close curtains on sun-facing windows"],
+    during: ["Stay indoors during peak heat hours (11am-4pm)", "Drink water frequently, avoid alcohol", "Wear light, loose cotton clothing", "Use wet cloths to cool down"],
+    after: ["Continue hydration even after temperatures drop", "Check on vulnerable individuals", "Report heat-related illnesses immediately", "Be aware of delayed heat stress effects"],
+  },
+  cyclone: {
+    before: ["Secure loose outdoor items", "Board up windows or close storm shutters", "Stock emergency supplies for 72 hours", "Charge phones and power banks", "Know your nearest cyclone shelter"],
+    during: ["Stay indoors, away from windows", "If outdoors, find sturdy shelter immediately", "Do not use candles or open flames", "Listen to emergency broadcasts"],
+    after: ["Stay inside until official all-clear", "Avoid fallen power lines", "Check for gas leaks before entering buildings", "Report structural damage to authorities"],
+  },
+  extremeRainfall: {
+    before: ["Clear drains and gutters around your home", "Move vehicles to higher ground", "Keep emergency supplies ready", "Monitor weather updates closely"],
+    during: ["Avoid low-lying areas and underpasses", "Do not drive through waterlogged roads", "Stay on upper floors if possible", "Keep phone charged for emergencies"],
+    after: ["Assess water damage carefully", "Sanitize flooded areas", "Check for electrical hazards", "Report blocked drains to municipal authorities"],
+  },
+  earthquake: {
+    before: ["Secure heavy furniture to walls", "Identify safe spots in each room", "Prepare an emergency go-bag", "Practice drop, cover, and hold on"],
+    during: ["Drop to the ground, take cover under sturdy furniture", "Stay away from windows and outer walls", "If outdoors, move to open ground", "Do not use elevators"],
+    after: ["Check for injuries and provide first aid", "Inspect your building for damage", "Be prepared for aftershocks", "Use stairs, not elevators", "Listen to radio for updates"],
+  },
+  wildfire: {
+    before: ["Create a defensible space around your home", "Prepare a go-bag with essentials", "Know at least two evacuation routes", "Keep important documents in a fireproof container"],
+    during: ["Evacuate immediately if ordered", "Wear N95 masks to protect from smoke", "Close all windows and doors", "Move flammable items away from windows"],
+    after: ["Do not return until officials say it is safe", "Check for hot spots or smoldering areas", "Wear protective clothing and masks", "Document damage for insurance"],
+  },
+  volcano: {
+    before: ["Know your evacuation route and shelter", "Prepare masks and goggles for ash protection", "Stock emergency supplies", "Monitor official volcano observatory updates"],
+    during: ["Evacuate immediately if ordered", "Protect yourself from ash: masks, goggles, long sleeves", "Stay upwind of the volcano if possible", "Avoid river valleys and low-lying areas"],
+    after: ["Do not return until cleared by authorities", "Clear ash from roofs to prevent collapse", "Protect water sources from contamination", "Seek medical help for breathing difficulties"],
+  },
+  landslide: {
+    before: ["Learn to recognize warning signs: cracks, tilting trees", "Avoid building on steep slopes or near drainage", "Prepare an emergency kit", "Monitor rainfall warnings"],
+    during: ["Move away from the path of the landslide", "If trapped, curl into a ball to protect yourself", "Listen for unusual sounds: rumbling, cracking", "Evacuate if told to do so"],
+    after: ["Stay away from the slide area", "Check for injured or trapped persons", "Report utility damage immediately", "Watch for secondary slides"],
+  },
+  drought: {
+    before: ["Install water-saving fixtures", "Collect rainwater where permitted", "Plan drought-tolerant landscaping", "Store emergency water supply"],
+    during: ["Reduce water use: shorter showers, full laundry loads", "Reuse water where safe", "Avoid watering lawns and washing cars", "Check on vulnerable community members"],
+    after: ["Continue conservation until supply is restored", "Inspect water systems for damage", "Support community recovery efforts", "Plan for future drought periods"],
+  },
+  coldWave: {
+    before: ["Insulate pipes and walls", "Stock warm clothing and blankets", "Prepare emergency heating with ventilation", "Check heating systems"],
+    during: ["Wear layers and cover extremities", "Keep indoor temperature above 18°C", "Avoid prolonged outdoor exposure", "Check on elderly neighbors"],
+    after: ["Thaw frozen pipes carefully", "Check for frostbite and hypothermia", "Inspect home for cold damage", "Restock emergency supplies"],
+  },
+  tsunami: {
+    before: ["Know your evacuation zone and route", "Identify high ground or tall buildings", "Prepare a go-bag", "Learn natural warning signs: receding ocean, ground shaking"],
+    during: ["Move to high ground or inland immediately", "Do not wait for official warning if you see signs", "Move on foot if roads are jammed", "Stay away until official all-clear"],
+    after: ["Do not return until authorities confirm safe", "Avoid damaged buildings", "Check water and food for contamination", "Stay tuned for aftershock warnings"],
+  },
+};
+
+export const EMERGENCY_CONTACTS: EmergencyContact[] = [
+  { name: "Emergency (India)", number: "112", description: "All-in-one emergency number" },
+  { name: "Police", number: "100", description: "Police emergency helpline" },
+  { name: "Ambulance", number: "108", description: "Emergency medical services" },
+  { name: "Fire Brigade", number: "101", description: "Fire and rescue services" },
+  { name: "NDMA Helpline", number: "1078", description: "National Disaster Management Authority" },
+  { name: "Disaster Management (SMS)", number: "1070", description: "State disaster control room" },
+  { name: "Women Helpline", number: "1091", description: "Women's emergency helpline" },
+  { name: "Child Helpline", number: "1098", description: "Child emergency helpline" },
+];
+
+export interface EmergencyService {
+  id: string;
+  name: string;
+  icon: string;
+  number: string;
+  description: string;
+  searchQuery: string;
+  color: string;
+}
+
+export const NEARBY_EMERGENCY_SERVICES: EmergencyService[] = [
+  { id: "hospital", name: "Hospitals", icon: "Plus", number: "108", description: "Nearest hospitals & emergency rooms", searchQuery: "hospital near me", color: "#ef4444" },
+  { id: "police", name: "Police Stations", icon: "Shield", number: "100", description: "Nearest police stations", searchQuery: "police station near me", color: "#3b82f6" },
+  { id: "fire", name: "Fire Stations", icon: "Flame", number: "101", description: "Nearest fire stations", searchQuery: "fire station near me", color: "#f97316" },
+  { id: "pharmacy", name: "Pharmacies", icon: "Pill", number: "", description: "Nearest pharmacies & medical stores", searchQuery: "pharmacy near me", color: "#22c55e" },
+  { id: "shelter", name: "Emergency Shelters", icon: "Home", number: "1078", description: "Nearest emergency & relief shelters", searchQuery: "emergency shelter near me", color: "#eab308" },
+  { id: "bloodbank", name: "Blood Banks", icon: "Droplets", number: "", description: "Nearest blood banks & donation centers", searchQuery: "blood bank near me", color: "#ec4899" },
+];
+
+
+//=== FILE: src/data/scenarios.ts ===
+import type { ScenarioData, ScenarioId, TimelineFrame, DisasterEvent, UnifiedAlert, WeatherData } from "@/types";
+
+function makeBaseWeather(overrides: Partial<WeatherData>): WeatherData {
+  const now = new Date();
+  const hourTimes: string[] = [];
+  const dayTimes: string[] = [];
+  for (let i = 0; i < 168; i++) {
+    const d = new Date(now);
+    d.setHours(d.getHours() + i);
+    hourTimes.push(d.toISOString());
+  }
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(now);
+    d.setDate(d.getDate() + i);
+    dayTimes.push(d.toISOString().slice(0, 10));
+  }
+
+  return {
+    current: {
+      temperature: 28,
+      apparentTemperature: 30,
+      precipitation: 0,
+      rain: 0,
+      windSpeed: 15,
+      windGusts: 25,
+      pressure: 1010,
+      humidity: 70,
+      visibility: 10000,
+      cloudCover: 40,
+      weatherCode: 3,
+      isDay: true,
+      time: now.toISOString(),
+      ...overrides.current,
+    },
+    hourly: {
+      time: hourTimes,
+      temperature: Array(168).fill(28),
+      precipitation: Array(168).fill(0),
+      rain: Array(168).fill(0),
+      windSpeed: Array(168).fill(15),
+      windGusts: Array(168).fill(25),
+      visibility: Array(168).fill(10000),
+      pressure: Array(168).fill(1010),
+      humidity: Array(168).fill(70),
+      cloudCover: Array(168).fill(40),
+      weatherCode: Array(168).fill(3),
+      ...overrides.hourly,
+    },
+    daily: {
+      time: dayTimes,
+      temperatureMax: [32, 33, 34, 33, 32, 31, 30],
+      temperatureMin: [24, 25, 25, 24, 24, 23, 23],
+      precipitationSum: [5, 2, 1, 3, 8, 12, 6],
+      rainSum: [5, 2, 1, 3, 8, 12, 6],
+      windSpeedMax: [25, 20, 18, 22, 30, 28, 24],
+      windGustsMax: [35, 30, 25, 32, 45, 40, 35],
+      weatherCode: [3, 3, 2, 3, 61, 63, 3],
+      sunrise: dayTimes.map((d) => `${d}T06:00`),
+      sunset: dayTimes.map((d) => `${d}T18:30`),
+      uvIndexMax: [7, 8, 8, 7, 5, 4, 6],
+      ...overrides.daily,
+    },
+    timezone: "UTC",
+    fetchedAt: Date.now(),
+  };
+}
+
+export const SCENARIOS: Record<ScenarioId, ScenarioData> = {
+  live: {
+    id: "live",
+    name: "Live Data",
+    description: "Real-time data from Open-Meteo, USGS, NASA EONET, and NWS",
+    centerLat: 20,
+    centerLon: 80,
+    zoom: 2.5,
+    events: [],
+    alerts: [],
+    weather: makeBaseWeather({}),
+    riskAssessments: [],
+    timelineHours: 0,
+    timelineData: [],
+  },
+
+  "chennai-cyclone": {
+    id: "chennai-cyclone",
+    name: "Chennai Cyclone",
+    description: "Cyclone Nivar-style landfall near Chennai with 120 km/h winds and heavy rainfall",
+    centerLat: 13.0827,
+    centerLon: 80.2707,
+    zoom: 4,
+    events: [
+      {
+        id: "sim-cyclone-1",
+        type: "cyclone",
+        title: "Cyclone Simulation — Landfall near Chennai",
+        description: "Severe cyclonic storm making landfall with sustained winds of 120 km/h. Storm surge of 1-2m expected along coast.",
+        location: "Chennai, Tamil Nadu, India",
+        lat: 13.0827,
+        lon: 80.2707,
+        severity: "emergency",
+        source: "simulation",
+        sourceLabel: "Simulated scenario",
+        time: new Date().toISOString(),
+        alertLevel: "severe",
+        magnitude: 120,
+        affectedArea: "Chennai, Kanchipuram, Tiruvallur districts",
+        affectedPopulation: "~10 million",
+        raw: null,
+      },
+    ],
+    alerts: [],
+    weather: makeBaseWeather({
+      current: {
+        temperature: 27,
+        apparentTemperature: 32,
+        precipitation: 85,
+        rain: 85,
+        windSpeed: 120,
+        windGusts: 145,
+        pressure: 980,
+        humidity: 92,
+        visibility: 3000,
+        cloudCover: 95,
+        weatherCode: 95,
+        isDay: true,
+        time: new Date().toISOString(),
+      },
+      daily: {
+        temperatureMax: [29, 28, 27, 28, 30, 31, 32],
+        temperatureMin: [25, 24, 24, 25, 25, 25, 26],
+        precipitationSum: [120, 85, 45, 20, 10, 5, 3],
+        rainSum: [120, 85, 45, 20, 10, 5, 3],
+        windSpeedMax: [120, 95, 60, 40, 30, 25, 20],
+        windGustsMax: [145, 110, 75, 50, 38, 32, 28],
+        weatherCode: [95, 95, 80, 63, 61, 3, 2],
+        sunrise: Array(7).fill("").map((_, i) => `${new Date().toISOString().slice(0, 10)}T06:00`),
+        sunset: Array(7).fill("").map((_, i) => `${new Date().toISOString().slice(0, 10)}T18:30`),
+        uvIndexMax: [1, 2, 4, 6, 7, 8, 8],
+      },
+      hourly: {
+        ...makeBaseWeather({}).hourly,
+        temperature: Array(168).fill(0).map((_, i) => 28 - Math.sin(i / 6) * 2),
+        rain: Array(168).fill(0).map((_, i) => {
+          if (i < 12) return 15 + Math.sin(i / 2) * 8;
+          if (i < 24) return 8 + Math.sin(i / 3) * 5;
+          return Math.max(0, 3 - (i - 24) / 20);
+        }),
+        windSpeed: Array(168).fill(0).map((_, i) => {
+          if (i < 6) return 120 - i * 5;
+          if (i < 24) return Math.max(30, 90 - i * 2.5);
+          return Math.max(15, 30 - (i - 24) / 4);
+        }),
+        windGusts: Array(168).fill(0).map((_, i) => {
+          if (i < 6) return 145 - i * 5;
+          if (i < 24) return Math.max(45, 115 - i * 3);
+          return Math.max(25, 45 - (i - 24) / 3);
+        }),
+        pressure: Array(168).fill(0).map((_, i) => {
+          if (i < 12) return 980 + i * 2;
+          if (i < 48) return 1004 + (i - 12) * 0.5;
+          return 1013;
+        }),
+      },
+    }),
+    riskAssessments: [],
+    timelineHours: 48,
+    timelineData: Array(48).fill(null).map((_, i) => {
+      const windSpeed = i < 6 ? 120 - i * 5 : Math.max(30, 90 - i * 2.5);
+      const gusts = i < 6 ? 145 - i * 5 : Math.max(45, 115 - i * 3);
+      const rain = i < 12 ? 15 + Math.sin(i / 2) * 8 : Math.max(0, 8 - (i - 12) / 3);
+      const pressure = i < 12 ? 980 + i * 2 : Math.min(1013, 1004 + (i - 12) * 0.5);
+      const cycloneScore = Math.min(100, (gusts / 150) * 60 + (windSpeed / 120) * 30 + Math.max(0, (1013 - pressure) / 33 * 10));
+      const floodScore = Math.min(100, (rain / 30) * 50 + (gusts / 150) * 20 + 20);
+      const riskLevel = cycloneScore >= 70 ? "severe" : cycloneScore >= 45 ? "high" : cycloneScore >= 25 ? "moderate" : "low";
+      return {
+        hour: i,
+        label: `T+${i}h`,
+        weather: {
+          windSpeed,
+          windGusts: gusts,
+          rain,
+          pressure,
+          temperature: 28 - Math.sin(i / 6) * 2,
+          precipitation: rain,
+          apparentTemperature: 32,
+          humidity: 92,
+          visibility: 3000,
+          cloudCover: 95,
+          weatherCode: 95,
+          isDay: true,
+          time: new Date(Date.now() + i * 3600000).toISOString(),
+        },
+        riskScores: {
+          cyclone: Math.round(cycloneScore),
+          flood: Math.round(floodScore),
+          extremeRainfall: Math.round(floodScore * 0.8),
+        },
+        alertLevel: riskLevel,
+      } as TimelineFrame;
+    }),
+  },
+
+  "assam-flood": {
+    id: "assam-flood",
+    name: "Assam Flood",
+    description: "Brahmaputra river overflow with 200mm rainfall over 72 hours affecting Assam",
+    centerLat: 26.1445,
+    centerLon: 91.7362,
+    zoom: 5,
+    events: [
+      {
+        id: "sim-flood-1",
+        type: "flood",
+        title: "Brahmaputra River Flood — Assam",
+        description: "Severe flooding along the Brahmaputra river basin. River discharge at 8000 m³/s, well above danger level. 15 districts affected.",
+        location: "Guwahati, Assam, India",
+        lat: 26.1445,
+        lon: 91.7362,
+        severity: "emergency",
+        source: "simulation",
+        sourceLabel: "Simulated scenario",
+        time: new Date().toISOString(),
+        alertLevel: "severe",
+        affectedArea: "15 districts of Assam",
+        affectedPopulation: "~4.5 million",
+        raw: null,
+      },
+    ],
+    alerts: [],
+    weather: makeBaseWeather({
+      current: {
+        temperature: 26,
+        apparentTemperature: 29,
+        precipitation: 75,
+        rain: 75,
+        windSpeed: 35,
+        windGusts: 50,
+        pressure: 998,
+        humidity: 95,
+        visibility: 2000,
+        cloudCover: 90,
+        weatherCode: 63,
+        isDay: true,
+        time: new Date().toISOString(),
+      },
+      daily: {
+        temperatureMax: [28, 27, 26, 27, 29, 30, 31],
+        temperatureMin: [23, 23, 22, 23, 24, 24, 25],
+        precipitationSum: [85, 75, 60, 40, 20, 10, 5],
+        rainSum: [85, 75, 60, 40, 20, 10, 5],
+        windSpeedMax: [35, 30, 28, 25, 22, 20, 18],
+        windGustsMax: [50, 42, 38, 32, 28, 25, 22],
+        weatherCode: [63, 63, 61, 61, 3, 2, 2],
+        sunrise: Array(7).fill("").map(() => `${new Date().toISOString().slice(0, 10)}T05:30`),
+        sunset: Array(7).fill("").map(() => `${new Date().toISOString().slice(0, 10)}T17:45`),
+        uvIndexMax: [2, 3, 4, 5, 7, 8, 8],
+      },
+      hourly: {
+        ...makeBaseWeather({}).hourly,
+        rain: Array(168).fill(0).map((_, i) => {
+          if (i < 48) return Math.max(0, 12 - Math.abs(i - 24) / 4);
+          return Math.max(0, 5 - (i - 48) / 20);
+        }),
+        temperature: Array(168).fill(0).map((_, i) => 26 + Math.sin((i + 6) / 6) * 3),
+        windSpeed: Array(168).fill(0).map((_, i) => Math.max(15, 35 - i / 4)),
+        windGusts: Array(168).fill(0).map((_, i) => Math.max(25, 50 - i / 3)),
+        pressure: Array(168).fill(0).map((_, i) => Math.min(1010, 998 + i * 0.25)),
+      },
+    }),
+    riskAssessments: [],
+    timelineHours: 72,
+    timelineData: Array(72).fill(null).map((_, i) => {
+      const rain = i < 48 ? Math.max(0, 12 - Math.abs(i - 24) / 4) : Math.max(0, 5 - (i - 48) / 20);
+      const floodScore = Math.min(100, (rain / 20) * 40 + 30 + Math.max(0, 20 - i / 4));
+      const landslideScore = Math.min(100, (rain / 20) * 50 + 15);
+      const riskLevel = floodScore >= 70 ? "severe" : floodScore >= 45 ? "high" : floodScore >= 25 ? "moderate" : "low";
+      return {
+        hour: i,
+        label: `T+${i}h`,
+        weather: {
+          rain,
+          temperature: 26 + Math.sin((i + 6) / 6) * 3,
+          windSpeed: Math.max(15, 35 - i / 4),
+          windGusts: Math.max(25, 50 - i / 3),
+          precipitation: rain,
+          apparentTemperature: 29,
+          humidity: 95,
+          visibility: 2000,
+          cloudCover: 90,
+          weatherCode: 63,
+          isDay: true,
+          pressure: Math.min(1010, 998 + i * 0.25),
+          time: new Date(Date.now() + i * 3600000).toISOString(),
+        },
+        riskScores: {
+          flood: Math.round(floodScore),
+          extremeRainfall: Math.round(floodScore * 0.85),
+          landslide: Math.round(landslideScore),
+        },
+        alertLevel: riskLevel,
+      } as TimelineFrame;
+    }),
+  },
+
+  "delhi-heatwave": {
+    id: "delhi-heatwave",
+    name: "Delhi Heatwave",
+    description: "Extreme heatwave with temperatures reaching 47°C, 6°C above normal",
+    centerLat: 28.6139,
+    centerLon: 77.209,
+    zoom: 5,
+    events: [
+      {
+        id: "sim-heat-1",
+        type: "heatwave",
+        title: "Severe Heatwave — Delhi NCR",
+        description: "Maximum temperature 47°C, 6.5°C above normal. 5 consecutive days above 45°C. Extreme heat risk for vulnerable populations.",
+        location: "Delhi, India",
+        lat: 28.6139,
+        lon: 77.209,
+        severity: "emergency",
+        source: "simulation",
+        sourceLabel: "Simulated scenario",
+        time: new Date().toISOString(),
+        alertLevel: "severe",
+        affectedArea: "Delhi NCR, Noida, Gurgaon, Faridabad",
+        affectedPopulation: "~30 million",
+        raw: null,
+      },
+    ],
+    alerts: [],
+    weather: makeBaseWeather({
+      current: {
+        temperature: 47,
+        apparentTemperature: 52,
+        precipitation: 0,
+        rain: 0,
+        windSpeed: 12,
+        windGusts: 18,
+        pressure: 1008,
+        humidity: 22,
+        visibility: 5000,
+        cloudCover: 5,
+        weatherCode: 0,
+        isDay: true,
+        time: new Date().toISOString(),
+      },
+      daily: {
+        temperatureMax: [47, 46, 45, 46, 47, 44, 42],
+        temperatureMin: [32, 31, 31, 32, 32, 30, 29],
+        precipitationSum: [0, 0, 0, 0, 0, 0, 0],
+        rainSum: [0, 0, 0, 0, 0, 0, 0],
+        windSpeedMax: [12, 14, 15, 12, 10, 16, 18],
+        windGustsMax: [18, 22, 24, 18, 15, 25, 28],
+        weatherCode: [0, 0, 0, 0, 0, 1, 1],
+        sunrise: Array(7).fill("").map(() => `${new Date().toISOString().slice(0, 10)}T05:30`),
+        sunset: Array(7).fill("").map(() => `${new Date().toISOString().slice(0, 10)}T19:15`),
+        uvIndexMax: [11, 11, 10, 11, 11, 9, 8],
+      },
+      hourly: {
+        ...makeBaseWeather({}).hourly,
+        temperature: Array(168).fill(0).map((_, i) => {
+          const base = 35 + Math.sin((i - 6) / 6) * 12;
+          return Math.max(30, Math.min(48, base));
+        }),
+        windSpeed: Array(168).fill(12),
+        windGusts: Array(168).fill(18),
+        humidity: Array(168).fill(22),
+        cloudCover: Array(168).fill(5),
+        rain: Array(168).fill(0),
+        precipitation: Array(168).fill(0),
+      },
+    }),
+    riskAssessments: [],
+    timelineHours: 24,
+    timelineData: Array(24).fill(null).map((_, i) => {
+      const temp = Math.max(30, Math.min(48, 35 + Math.sin((i - 6) / 6) * 12));
+      const apparent = temp + 5;
+      const heatScore = Math.min(100, ((temp - 30) / 18) * 50 + ((apparent - 35) / 17) * 30 + 15);
+      const riskLevel = heatScore >= 70 ? "severe" : heatScore >= 45 ? "high" : heatScore >= 25 ? "moderate" : "low";
+      return {
+        hour: i,
+        label: `T+${i}h`,
+        weather: {
+          temperature: temp,
+          apparentTemperature: apparent,
+          humidity: 22,
+          windSpeed: 12,
+          windGusts: 18,
+          precipitation: 0,
+          rain: 0,
+          visibility: 5000,
+          cloudCover: 5,
+          weatherCode: 0,
+          isDay: temp > 35,
+          pressure: 1008,
+          time: new Date(Date.now() + i * 3600000).toISOString(),
+        },
+        riskScores: {
+          heatwave: Math.round(heatScore),
+        },
+        alertLevel: riskLevel,
+      } as TimelineFrame;
+    }),
+  },
+
+  "mumbai-rainfall": {
+    id: "mumbai-rainfall",
+    name: "Mumbai Extreme Rainfall",
+    description: "Mumbai monsoon deluge with 250mm in 24 hours, waterlogging across the city",
+    centerLat: 19.076,
+    centerLon: 72.8777,
+    zoom: 5,
+    events: [
+      {
+        id: "sim-rain-1",
+        type: "extremeRainfall",
+        title: "Extreme Rainfall Event — Mumbai",
+        description: "250mm rainfall in 24 hours. Severe waterlogging across low-lying areas. Suburban train services affected.",
+        location: "Mumbai, Maharashtra, India",
+        lat: 19.076,
+        lon: 72.8777,
+        severity: "emergency",
+        source: "simulation",
+        sourceLabel: "Simulated scenario",
+        time: new Date().toISOString(),
+        alertLevel: "severe",
+        affectedArea: "Mumbai City and Suburban districts",
+        affectedPopulation: "~20 million",
+        raw: null,
+      },
+    ],
+    alerts: [],
+    weather: makeBaseWeather({
+      current: {
+        temperature: 25,
+        apparentTemperature: 28,
+        precipitation: 35,
+        rain: 35,
+        windSpeed: 45,
+        windGusts: 65,
+        pressure: 1003,
+        humidity: 96,
+        visibility: 500,
+        cloudCover: 100,
+        weatherCode: 95,
+        isDay: true,
+        time: new Date().toISOString(),
+      },
+      daily: {
+        temperatureMax: [27, 26, 26, 28, 29, 30, 31],
+        temperatureMin: [24, 24, 23, 24, 25, 25, 26],
+        precipitationSum: [250, 120, 60, 30, 15, 8, 5],
+        rainSum: [250, 120, 60, 30, 15, 8, 5],
+        windSpeedMax: [45, 35, 28, 22, 18, 15, 14],
+        windGustsMax: [65, 48, 38, 30, 25, 22, 20],
+        weatherCode: [95, 95, 80, 63, 61, 3, 2],
+        sunrise: Array(7).fill("").map(() => `${new Date().toISOString().slice(0, 10)}T06:15`),
+        sunset: Array(7).fill("").map(() => `${new Date().toISOString().slice(0, 10)}T19:00`),
+        uvIndexMax: [1, 2, 4, 6, 7, 8, 8],
+      },
+      hourly: {
+        ...makeBaseWeather({}).hourly,
+        rain: Array(168).fill(0).map((_, i) => {
+          if (i < 24) return Math.max(0, 35 - Math.abs(i - 12) * 1.2);
+          if (i < 48) return Math.max(0, 15 - Math.abs(i - 36) * 0.8);
+          return Math.max(0, 5 - (i - 48) / 15);
+        }),
+        temperature: Array(168).fill(0).map((_, i) => 25 + Math.sin((i + 6) / 6) * 2),
+        windSpeed: Array(168).fill(0).map((_, i) => Math.max(15, 45 - i / 2)),
+        windGusts: Array(168).fill(0).map((_, i) => Math.max(25, 65 - i / 1.5)),
+        visibility: Array(168).fill(0).map((_, i) => Math.min(10000, 500 + i * 200)),
+      },
+    }),
+    riskAssessments: [],
+    timelineHours: 48,
+    timelineData: Array(48).fill(null).map((_, i) => {
+      const rain = i < 24 ? Math.max(0, 35 - Math.abs(i - 12) * 1.2) : Math.max(0, 15 - Math.abs(i - 36) * 0.8);
+      const floodScore = Math.min(100, (rain / 35) * 50 + 25 + Math.max(0, 15 - i / 3));
+      const extremeScore = Math.min(100, (rain / 35) * 60 + 20);
+      const riskLevel = floodScore >= 70 ? "severe" : floodScore >= 45 ? "high" : floodScore >= 25 ? "moderate" : "low";
+      return {
+        hour: i,
+        label: `T+${i}h`,
+        weather: {
+          rain,
+          temperature: 25 + Math.sin((i + 6) / 6) * 2,
+          windSpeed: Math.max(15, 45 - i / 2),
+          windGusts: Math.max(25, 65 - i / 1.5),
+          precipitation: rain,
+          apparentTemperature: 28,
+          humidity: 96,
+          visibility: Math.min(10000, 500 + i * 200),
+          cloudCover: 100,
+          weatherCode: 95,
+          isDay: true,
+          pressure: 1003,
+          time: new Date(Date.now() + i * 3600000).toISOString(),
+        },
+        riskScores: {
+          flood: Math.round(floodScore),
+          extremeRainfall: Math.round(extremeScore),
+        },
+        alertLevel: riskLevel,
+      } as TimelineFrame;
+    }),
+  },
+
+  "himalayan-earthquake": {
+    id: "himalayan-earthquake",
+    name: "Himalayan Earthquake",
+    description: "M6.8 earthquake in the Himalayan region with tsunami warning for nearby rivers",
+    centerLat: 30.3165,
+    centerLon: 78.0322,
+    zoom: 5,
+    events: [
+      {
+        id: "sim-quake-1",
+        type: "earthquake",
+        title: "M6.8 Earthquake — Himalayan Region",
+        description: "Magnitude 6.8 earthquake at 35km depth. Felt across Uttarakhand, Himachal Pradesh, and parts of Nepal. Tsunami warning for nearby river valleys.",
+        location: "Near Dehradun, Uttarakhand, India",
+        lat: 30.3165,
+        lon: 78.0322,
+        severity: "emergency",
+        source: "simulation",
+        sourceLabel: "Simulated scenario",
+        time: new Date().toISOString(),
+        alertLevel: "severe",
+        magnitude: 6.8,
+        depth: 35,
+        tsunamiWarning: true,
+        affectedArea: "Uttarakhand, Himachal Pradesh, Western Nepal",
+        affectedPopulation: "~5 million",
+        raw: null,
+      },
+    ],
+    alerts: [],
+    weather: makeBaseWeather({}),
+    riskAssessments: [],
+    timelineHours: 24,
+    timelineData: Array(24).fill(null).map((_, i) => {
+      const quakeScore = i < 6 ? 85 : Math.max(30, 85 - i * 3);
+      const landslideScore = i < 12 ? Math.min(70, 50 + i * 2) : Math.max(20, 70 - (i - 12) * 3);
+      const riskLevel = quakeScore >= 70 ? "severe" : quakeScore >= 45 ? "high" : quakeScore >= 25 ? "moderate" : "low";
+      return {
+        hour: i,
+        label: `T+${i}h`,
+        weather: {
+          temperature: 20,
+          apparentTemperature: 20,
+          humidity: 60,
+          windSpeed: 10,
+          windGusts: 15,
+          precipitation: 0,
+          rain: 0,
+          visibility: 10000,
+          cloudCover: 30,
+          weatherCode: 2,
+          isDay: true,
+          pressure: 1010,
+          time: new Date(Date.now() + i * 3600000).toISOString(),
+        },
+        riskScores: {
+          earthquake: Math.round(quakeScore),
+          landslide: Math.round(landslideScore),
+        },
+        alertLevel: riskLevel,
+      } as TimelineFrame;
+    }),
+  },
+};
+
+export const SCENARIO_LIST = Object.values(SCENARIOS);
+
+
+//=== FILE: src/lib/api.ts ===
+import type {
+  WeatherData,
+  DisasterEvent,
+  UnifiedAlert,
+  HazardType,
+  AlertSource,
+  AlertSeverity,
+  RiskLevel,
+  HistoricalData,
+} from "@/types";
+
+const OPEN_METEO_FORECAST = "https://api.open-meteo.com/v1/forecast";
+const OPEN_METEO_ARCHIVE = "https://archive-api.open-meteo.com/v1/archive";
+const OPEN_METEO_GEOCODING = "https://geocoding-api.open-meteo.com/v1/search";
+const OPEN_METEO_FLOOD = "https://flood-api.open-meteo.com/v1/flood";
+const USGS_EARTHQUAKE_DAY = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
+const USGS_EARTHQUAKE_WEEK = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson";
+const EONET_EVENTS = "https://eonet.gsfc.nasa.gov/api/v3/events";
+const NWS_ALERTS = "https://api.weather.gov/alerts/active";
+
+const cache = new Map<string, { data: unknown; expires: number }>();
+const CACHE_TTL = 10 * 60 * 1000;
+
+function getCached<T>(key: string): T | null {
+  const entry = cache.get(key);
+  if (entry && entry.expires > Date.now()) return entry.data as T;
+  cache.delete(key);
+  return null;
+}
+
+function setCached(key: string, data: unknown) {
+  cache.set(key, { data, expires: Date.now() + CACHE_TTL });
+}
+
+async function fetchJSON<T>(url: string, retries = 2): Promise<T> {
+  const cached = getCached<T>(url);
+  if (cached) return cached;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = (await res.json()) as T;
+      setCached(url, data);
+      return data;
+    } catch (err) {
+      if (attempt === retries) throw err;
+      await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
+    }
+  }
+  throw new Error("Unreachable");
+}
+
+export async function fetchWeather(lat: number, lon: number): Promise<WeatherData> {
+  const params = new URLSearchParams({
+    latitude: lat.toFixed(4),
+    longitude: lon.toFixed(4),
+    current: [
+      "temperature_2m",
+      "apparent_temperature",
+      "precipitation",
+      "rain",
+      "wind_speed_10m",
+      "wind_gusts_10m",
+      "pressure_msl",
+      "relative_humidity_2m",
+      "visibility",
+      "cloud_cover",
+      "weather_code",
+      "is_day",
+    ].join(","),
+    hourly: [
+      "temperature_2m",
+      "precipitation",
+      "rain",
+      "wind_speed_10m",
+      "wind_gusts_10m",
+      "visibility",
+      "pressure_msl",
+      "relative_humidity_2m",
+      "cloud_cover",
+      "weather_code",
+    ].join(","),
+    daily: [
+      "temperature_2m_max",
+      "temperature_2m_min",
+      "precipitation_sum",
+      "rain_sum",
+      "wind_speed_10m_max",
+      "wind_gusts_10m_max",
+      "weather_code",
+      "sunrise",
+      "sunset",
+      "uv_index_max",
+    ].join(","),
+    timezone: "auto",
+    forecast_days: "7",
+  });
+
+  const data = await fetchJSON<Record<string, unknown>>(`${OPEN_METEO_FORECAST}?${params}`);
+  const current = data.current as Record<string, number | boolean | string>;
+  const hourly = data.hourly as Record<string, number[] | string[]>;
+  const daily = data.daily as Record<string, number[] | string[]>;
+
+  return {
+    current: {
+      temperature: current.temperature_2m as number,
+      apparentTemperature: current.apparent_temperature as number,
+      precipitation: current.precipitation as number,
+      rain: current.rain as number,
+      windSpeed: current.wind_speed_10m as number,
+      windGusts: current.wind_gusts_10m as number,
+      pressure: current.pressure_msl as number,
+      humidity: current.relative_humidity_2m as number,
+      visibility: current.visibility as number,
+      cloudCover: current.cloud_cover as number,
+      weatherCode: current.weather_code as number,
+      isDay: current.is_day as boolean,
+      time: current.time as string,
+    },
+    hourly: {
+      time: hourly.time as string[],
+      temperature: hourly.temperature_2m as number[],
+      precipitation: hourly.precipitation as number[],
+      rain: hourly.rain as number[],
+      windSpeed: hourly.wind_speed_10m as number[],
+      windGusts: hourly.wind_gusts_10m as number[],
+      visibility: hourly.visibility as number[],
+      pressure: hourly.pressure_msl as number[],
+      humidity: hourly.relative_humidity_2m as number[],
+      cloudCover: hourly.cloud_cover as number[],
+      weatherCode: hourly.weather_code as number[],
+    },
+    daily: {
+      time: daily.time as string[],
+      temperatureMax: daily.temperature_2m_max as number[],
+      temperatureMin: daily.temperature_2m_min as number[],
+      precipitationSum: daily.precipitation_sum as number[],
+      rainSum: daily.rain_sum as number[],
+      windSpeedMax: daily.wind_speed_10m_max as number[],
+      windGustsMax: daily.wind_gusts_10m_max as number[],
+      weatherCode: daily.weather_code as number[],
+      sunrise: daily.sunrise as string[],
+      sunset: daily.sunset as string[],
+      uvIndexMax: daily.uv_index_max as number[],
+    },
+    timezone: data.timezone as string,
+    fetchedAt: Date.now(),
+  };
+}
+
+export async function fetchHistorical(lat: number, lon: number): Promise<HistoricalData> {
+  const now = new Date();
+  const end = new Date(now);
+  end.setDate(end.getDate() - 1);
+  const start = new Date(end);
+  start.setDate(start.getDate() - 30);
+
+  const params = new URLSearchParams({
+    latitude: lat.toFixed(4),
+    longitude: lon.toFixed(4),
+    start_date: start.toISOString().slice(0, 10),
+    end_date: end.toISOString().slice(0, 10),
+    daily: "rain_sum,temperature_2m_mean",
+    timezone: "auto",
+  });
+
+  try {
+    const data = await fetchJSON<Record<string, unknown>>(`${OPEN_METEO_ARCHIVE}?${params}`);
+    const daily = data.daily as Record<string, number[] | string[]>;
+    return {
+      dates: daily.time as string[],
+      rainfall: daily.rain_sum as number[],
+      temperature: daily.temperature_2m_mean as number[],
+      source: "Open-Meteo Archive API",
+    };
+  } catch {
+    return { dates: [], rainfall: [], temperature: [], source: "Open-Meteo Archive API" };
+  }
+}
+
+export async function fetchFloodData(lat: number, lon: number): Promise<number | null> {
+  const params = new URLSearchParams({
+    latitude: lat.toFixed(4),
+    longitude: lon.toFixed(4),
+    daily: "river_discharge",
+    past_days: "7",
+  });
+  try {
+    const data = await fetchJSON<Record<string, unknown>>(`${OPEN_METEO_FLOOD}?${params}`);
+    const daily = data.daily as Record<string, number[]>;
+    const discharge = (daily.river_discharge as number[]) ?? [];
+    return discharge.length > 0 ? discharge[discharge.length - 1] : null;
+  } catch {
+    return null;
+  }
+}
+
+export interface GeoResult {
+  name: string;
+  country: string;
+  lat: number;
+  lon: number;
+  admin1?: string;
+}
+
+export async function searchCity(query: string): Promise<GeoResult[]> {
+  const params = new URLSearchParams({ name: query, count: "10", language: "en", format: "json" });
+  try {
+    const data = await fetchJSON<{ results?: GeoResult[] }>(`${OPEN_METEO_GEOCODING}?${params}`);
+    return data.results ?? [];
+  } catch {
+    return [];
+  }
+}
+
+interface USGSFeature {
+  id: string;
+  properties: {
+    mag: number;
+    place: string;
+    time: number;
+    tsunami: number;
+    type: string;
+  };
+  geometry: { coordinates: [number, number, number] };
+}
+
+export async function fetchEarthquakes(): Promise<DisasterEvent[]> {
+  try {
+    const [dayData, weekData] = await Promise.all([
+      fetchJSON<{ features: USGSFeature[] }>(USGS_EARTHQUAKE_DAY).catch(() => ({ features: [] })),
+      fetchJSON<{ features: USGSFeature[] }>(USGS_EARTHQUAKE_WEEK).catch(() => ({ features: [] })),
+    ]);
+
+    const seen = new Set<string>();
+    const events: DisasterEvent[] = [];
+
+    for (const feature of [...dayData.features, ...weekData.features]) {
+      if (seen.has(feature.id)) continue;
+      seen.add(feature.id);
+      const [lon, lat, depth] = feature.geometry.coordinates;
+      const mag = feature.properties.mag ?? 0;
+      const severity: AlertSeverity = mag >= 6 ? "emergency" : mag >= 4.5 ? "warning" : mag >= 2.5 ? "watch" : "advisory";
+      const riskLevel: RiskLevel = mag >= 6 ? "severe" : mag >= 4.5 ? "high" : mag >= 2.5 ? "moderate" : "low";
+
+      events.push({
+        id: `usgs-${feature.id}`,
+        type: "earthquake",
+        title: `M${mag.toFixed(1)} Earthquake`,
+        description: `${feature.properties.place ?? "Unknown location"}`,
+        location: feature.properties.place ?? "Unknown",
+        lat,
+        lon,
+        severity,
+        source: "usgs",
+        sourceUrl: `https://earthquake.usgs.gov/earthquakes/eventpage/${feature.id}`,
+        time: new Date(feature.properties.time).toISOString(),
+        magnitude: mag,
+        depth,
+        tsunamiWarning: feature.properties.tsunami === 1,
+        riskLevel,
+        raw: feature,
+      });
+    }
+    return events;
+  } catch {
+    return [];
+  }
+}
+
+interface EONETEvent {
+  id: string;
+  title: string;
+  description?: string;
+  categories: { id: string; title: string }[];
+  geometry: { date: string; type: string; coordinates: number[] | number[][] }[];
+  sources: { url: string; id: string }[];
+  closed?: string | null;
+}
+
+const EONET_CATEGORY_MAP: Record<string, HazardType> = {
+  "wildfires": "wildfire",
+  "volcanoes": "volcano",
+  "severeStorms": "cyclone",
+  "floods": "flood",
+  "drought": "drought",
+  "landslides": "landslide",
+  "seaLakeIce": "coldWave",
+  "manmade": "wildfire",
+  "tempExtremes": "heatwave",
+};
+
+export async function fetchEonetEvents(): Promise<DisasterEvent[]> {
+  try {
+    const data = await fetchJSON<{ events: EONETEvent[] }>(`${EONET_EVENTS}?status=open`);
+    const events: DisasterEvent[] = [];
+
+    for (const event of data.events) {
+      const category = event.categories[0]?.id ?? "";
+      const hazardType = EONET_CATEGORY_MAP[category] ?? "flood";
+      const geo = event.geometry[event.geometry.length - 1];
+      if (!geo || geo.type === "Polygon") continue;
+      const coords = geo.coordinates as number[];
+      const [lon, lat] = coords;
+      if (lat === undefined || lon === undefined) continue;
+
+      const riskLevel: RiskLevel = "high";
+      const severity: AlertSeverity = "warning";
+
+      events.push({
+        id: `eonet-${event.id}`,
+        type: hazardType,
+        title: event.title,
+        description: event.description ?? event.categories.map((c) => c.title).join(", "),
+        location: `${lat.toFixed(2)}, ${lon.toFixed(2)}`,
+        lat,
+        lon,
+        severity,
+        source: "eonet",
+        sourceUrl: event.sources[0]?.url,
+        time: geo.date,
+        riskLevel,
+        raw: event,
+      });
+    }
+    return events;
+  } catch {
+    return [];
+  }
+}
+
+interface NWSAlert {
+  id: string;
+  event: string;
+  headline: string;
+  description: string;
+  instruction: string;
+  severity: string;
+  areaDesc: string;
+  onset: string;
+  expires: string;
+  sent: string;
+  geometry?: { coordinates: number[][] | number[][][] };
+  parameters?: Record<string, string[]>;
+}
+
+export async function fetchNWSAlerts(): Promise<UnifiedAlert[]> {
+  try {
+    const data = await fetchJSON<{ features: { id: string; properties: NWSAlert; geometry?: { coordinates: number[][] } }[] }>(
+      `${NWS_ALERTS}?status=actual&message_type=alert`
+    );
+    const alerts: UnifiedAlert[] = [];
+
+    for (const feature of data.features) {
+      const p = feature.properties;
+      if (!p) continue;
+      const severityMap: Record<string, AlertSeverity> = {
+        Minor: "advisory",
+        Moderate: "watch",
+        Severe: "warning",
+        Extreme: "emergency",
+      };
+      const riskMap: Record<string, RiskLevel> = {
+        Minor: "low",
+        Moderate: "moderate",
+        Severe: "high",
+        Extreme: "severe",
+      };
+      const sev = severityMap[p.severity] ?? "watch";
+      const risk = riskMap[p.severity] ?? "moderate";
+
+      let lat = 39.5,
+        lon = -98.35;
+      if (feature.geometry?.coordinates) {
+        const coords = feature.geometry.coordinates[0] as unknown;
+        if (Array.isArray(coords) && Array.isArray((coords as unknown[])[0])) {
+          const polyCoords = coords as number[][];
+          lon = polyCoords.reduce((s, c) => s + c[0], 0) / polyCoords.length;
+          lat = polyCoords.reduce((s, c) => s + c[1], 0) / polyCoords.length;
+        }
+      }
+
+      const titleLower = (p.event || "").toLowerCase();
+      let type: HazardType | "official" = "official";
+      if (titleLower.includes("flood")) type = "flood";
+      else if (titleLower.includes("heat")) type = "heatwave";
+      else if (titleLower.includes("tornado") || titleLower.includes("thunderstorm") || titleLower.includes("wind") || titleLower.includes("hurricane") || titleLower.includes("cyclone")) type = "cyclone";
+      else if (titleLower.includes("fire")) type = "wildfire";
+      else if (titleLower.includes("winter") || titleLower.includes("cold") || titleLower.includes("snow") || titleLower.includes("ice")) type = "coldWave";
+      else if (titleLower.includes("tsunami")) type = "tsunami";
+
+      alerts.push({
+        id: `nws-${feature.id}`,
+        type,
+        title: p.event,
+        description: (p.description ?? "").slice(0, 500),
+        severity: sev,
+        riskLevel: risk,
+        source: "nws",
+        sourceLabel: "NWS (US National Weather Service)",
+        sourceUrl: `https://api.weather.gov/alerts/${feature.id}`,
+        time: p.sent,
+        lat,
+        lon,
+        location: p.areaDesc ?? "United States",
+        instructions: p.instruction ?? undefined,
+        expiry: p.expires,
+      });
+    }
+    return alerts;
+  } catch {
+    return [];
+  }
+}
+
+export function deriveWeatherAlerts(
+  weather: WeatherData,
+  lat: number,
+  lon: number,
+  locationName: string
+): UnifiedAlert[] {
+  const alerts: UnifiedAlert[] = [];
+  const { current, daily, hourly } = weather;
+
+  const rain24h = daily.rainSum[0] ?? 0;
+  const rain72h = (daily.rainSum[0] ?? 0) + (daily.rainSum[1] ?? 0) + (daily.rainSum[2] ?? 0);
+  const maxGusts = daily.windGustsMax[0] ?? 0;
+  const tempMax = daily.temperatureMax[0] ?? current.temperature;
+  const apparentTemp = current.apparentTemperature;
+  const visibility = current.visibility;
+
+  if (rain24h > 115.6) {
+    alerts.push({
+      id: `derived-flood-${lat}-${lon}-${Date.now()}`,
+      type: "flood",
+      title: "RED Heavy Rainfall Warning",
+      description: `24h rainfall: ${rain24h.toFixed(1)}mm exceeds 115.6mm threshold. Extreme flood risk.`,
+      severity: "emergency",
+      riskLevel: "severe",
+      source: "derived",
+      sourceLabel: "Derived from forecast (not an official warning)",
+      sourceUrl: "https://mausam.imd.gov.in/",
+      time: new Date().toISOString(),
+      lat,
+      lon,
+      location: locationName,
+    });
+  } else if (rain24h > 64.5) {
+    alerts.push({
+      id: `derived-flood-${lat}-${lon}-${Date.now()}`,
+      type: "flood",
+      title: "ORANGE Heavy Rainfall Warning",
+      description: `24h rainfall: ${rain24h.toFixed(1)}mm exceeds 64.5mm threshold. High flood risk.`,
+      severity: "warning",
+      riskLevel: "high",
+      source: "derived",
+      sourceLabel: "Derived from forecast (not an official warning)",
+      sourceUrl: "https://mausam.imd.gov.in/",
+      time: new Date().toISOString(),
+      lat,
+      lon,
+      location: locationName,
+    });
+  }
+
+  if (tempMax >= 40 || apparentTemp >= 45) {
+    alerts.push({
+      id: `derived-heat-${lat}-${lon}-${Date.now()}`,
+      type: "heatwave",
+      title: tempMax >= 45 ? "RED Heatwave Warning" : "ORANGE Heatwave Warning",
+      description: `Max temperature: ${tempMax.toFixed(1)}°C, apparent temp: ${apparentTemp.toFixed(1)}°C. Heatwave conditions.`,
+      severity: tempMax >= 45 ? "emergency" : "warning",
+      riskLevel: tempMax >= 45 ? "severe" : "high",
+      source: "derived",
+      sourceLabel: "Derived from forecast (not an official warning)",
+      sourceUrl: "https://mausam.imd.gov.in/",
+      time: new Date().toISOString(),
+      lat,
+      lon,
+      location: locationName,
+    });
+  }
+
+  if (maxGusts >= 90) {
+    alerts.push({
+      id: `derived-wind-${lat}-${lon}-${Date.now()}`,
+      type: "cyclone",
+      title: "RED Strong Wind Warning",
+      description: `Wind gusts up to ${maxGusts.toFixed(0)} km/h expected. Damaging winds likely.`,
+      severity: "emergency",
+      riskLevel: "severe",
+      source: "derived",
+      sourceLabel: "Derived from forecast (not an official warning)",
+      sourceUrl: "https://mausam.imd.gov.in/",
+      time: new Date().toISOString(),
+      lat,
+      lon,
+      location: locationName,
+    });
+  } else if (maxGusts >= 60) {
+    alerts.push({
+      id: `derived-wind-${lat}-${lon}-${Date.now()}`,
+      type: "cyclone",
+      title: "ORANGE Strong Wind Warning",
+      description: `Wind gusts up to ${maxGusts.toFixed(0)} km/h expected. Strong winds likely.`,
+      severity: "warning",
+      riskLevel: "high",
+      source: "derived",
+      sourceLabel: "Derived from forecast (not an official warning)",
+      sourceUrl: "https://mausam.imd.gov.in/",
+      time: new Date().toISOString(),
+      lat,
+      lon,
+      location: locationName,
+    });
+  }
+
+  if (visibility > 0 && visibility < 1000) {
+    alerts.push({
+      id: `derived-fog-${lat}-${lon}-${Date.now()}`,
+      type: "official",
+      title: "Dense Fog Advisory",
+      description: `Visibility: ${visibility.toFixed(0)}m. Very low visibility conditions.`,
+      severity: "watch",
+      riskLevel: "moderate",
+      source: "derived",
+      sourceLabel: "Derived from forecast (not an official warning)",
+      sourceUrl: "https://mausam.imd.gov.in/",
+      time: new Date().toISOString(),
+      lat,
+      lon,
+      location: locationName,
+    });
+  }
+
+  const hourlyRain = hourly.rain.slice(0, 24);
+  const maxHourlyRain = Math.max(...hourlyRain, 0);
+  if (maxHourlyRain > 20) {
+    alerts.push({
+      id: `derived-extrain-${lat}-${lon}-${Date.now()}`,
+      type: "extremeRainfall",
+      title: "Extreme Rainfall Warning",
+      description: `Hourly rainfall up to ${maxHourlyRain.toFixed(1)}mm. Flash flood risk possible.`,
+      severity: "warning",
+      riskLevel: "high",
+      source: "derived",
+      sourceLabel: "Derived from forecast (not an official warning)",
+      sourceUrl: "https://mausam.imd.gov.in/",
+      time: new Date().toISOString(),
+      lat,
+      lon,
+      location: locationName,
+    });
+  }
+
+  return alerts;
+}
+
+export async function fetchAllDisasterEvents(): Promise<{
+  earthquakes: DisasterEvent[];
+  eonetEvents: DisasterEvent[];
+  nwsAlerts: UnifiedAlert[];
+}> {
+  const [earthquakes, eonetEvents, nwsAlerts] = await Promise.all([
+    fetchEarthquakes(),
+    fetchEonetEvents(),
+    fetchNWSAlerts(),
+  ]);
+  return { earthquakes, eonetEvents, nwsAlerts };
+}
+
+export function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+
+//=== FILE: src/lib/riskEngine.ts ===
+import type {
+  WeatherData,
+  RiskAssessment,
+  RiskIndicator,
+  RiskLevel,
+  HazardType,
+  DisasterEvent,
+  HistoricalData,
+} from "@/types";
+import { haversineDistance } from "@/lib/api";
+
+export function scoreToLevel(score: number): RiskLevel {
+  if (score >= 70) return "severe";
+  if (score >= 45) return "high";
+  if (score >= 25) return "moderate";
+  return "low";
+}
+
+export function levelToScore(level: RiskLevel): number {
+  switch (level) {
+    case "severe": return 80;
+    case "high": return 55;
+    case "moderate": return 35;
+    case "low": return 10;
+  }
+}
+
+function clampScore(n: number): number {
+  return Math.max(0, Math.min(100, Math.round(n)));
+}
+
+function makeIndicator(
+  name: string,
+  value: string,
+  contribution: number,
+  maxContribution: number,
+  description: string
+): RiskIndicator {
+  return { name, value, contribution: Math.round(contribution), maxContribution, description };
+}
+
+export function assessFlood(weather: WeatherData, riverDischarge: number | null): RiskAssessment {
+  const rain24h = weather.daily.rainSum[0] ?? 0;
+  const rain72h = (weather.daily.rainSum[0] ?? 0) + (weather.daily.rainSum[1] ?? 0) + (weather.daily.rainSum[2] ?? 0);
+  const forecastRain = weather.daily.precipitationSum.slice(0, 3).reduce((a, b) => a + (b ?? 0), 0);
+  const humidity = weather.current.humidity;
+  const indicators: RiskIndicator[] = [];
+
+  const rain24Score = Math.min(30, (rain24h / 115.6) * 30);
+  indicators.push(makeIndicator("24h Rainfall", `${rain24h.toFixed(1)} mm`, rain24Score, 30, "IMD: >64.5mm is heavy rain, >115.6mm is extremely heavy"));
+
+  const rain72Score = Math.min(25, (rain72h / 200) * 25);
+  indicators.push(makeIndicator("72h Rainfall", `${rain72h.toFixed(1)} mm`, rain72Score, 25, "3-day accumulation indicates sustained rainfall"));
+
+  const forecastScore = Math.min(20, (forecastRain / 150) * 20);
+  indicators.push(makeIndicator("Forecast Rain (3d)", `${forecastRain.toFixed(1)} mm`, forecastScore, 20, "Upcoming precipitation forecast"));
+
+  const dischargeScore = riverDischarge !== null ? Math.min(15, (riverDischarge / 5000) * 15) : 0;
+  indicators.push(makeIndicator("River Discharge", riverDischarge !== null ? `${riverDischarge.toFixed(0)} m³/s` : "N/A", dischargeScore, 15, "River flow rate from Open-Meteo Flood API"));
+
+  const humidityScore = Math.min(10, ((humidity - 60) / 40) * 10);
+  indicators.push(makeIndicator("Humidity", `${humidity.toFixed(0)}%`, Math.max(0, humidityScore), 10, "High humidity indicates saturated air mass"));
+
+  const total = indicators.reduce((s, i) => s + i.contribution, 0);
+  return { hazard: "flood", score: clampScore(total), level: scoreToLevel(total), indicators };
+}
+
+export function assessHeatwave(weather: WeatherData, historical: HistoricalData | null): RiskAssessment {
+  const tempMax = weather.daily.temperatureMax[0] ?? weather.current.temperature;
+  const apparentTemp = weather.current.apparentTemperature;
+  const histAvg = historical && historical.temperature.length > 0
+    ? historical.temperature.reduce((a, b) => a + b, 0) / historical.temperature.length
+    : tempMax - 5;
+  const deviation = tempMax - histAvg;
+
+  let consecutiveHotDays = 0;
+  for (const t of weather.daily.temperatureMax) {
+    if (t >= 40) consecutiveHotDays++;
+    else break;
+  }
+
+  const indicators: RiskIndicator[] = [];
+
+  const tempScore = Math.min(35, ((tempMax - 30) / 20) * 35);
+  indicators.push(makeIndicator("Max Temperature", `${tempMax.toFixed(1)}°C`, tempScore, 35, "IMD: ≥40°C is heatwave condition"));
+
+  const apparentScore = Math.min(25, ((apparentTemp - 35) / 15) * 25);
+  indicators.push(makeIndicator("Apparent Temperature", `${apparentTemp.toFixed(1)}°C`, Math.max(0, apparentScore), 25, "Feels-like temperature including humidity"));
+
+  const devScore = Math.min(20, (Math.max(0, deviation) / 7) * 20);
+  indicators.push(makeIndicator("Deviation from Normal", `+${deviation.toFixed(1)}°C`, devScore, 20, "IMD: 4.5°C above normal = heatwave"));
+
+  const consecScore = Math.min(20, (consecutiveHotDays / 5) * 20);
+  indicators.push(makeIndicator("Consecutive Hot Days", `${consecutiveHotDays} days`, consecScore, 20, "Sustained heat compounds health risk"));
+
+  const total = indicators.reduce((s, i) => s + i.contribution, 0);
+  return { hazard: "heatwave", score: clampScore(total), level: scoreToLevel(total), indicators };
+}
+
+export function assessCyclone(weather: WeatherData): RiskAssessment {
+  const windSpeed = weather.current.windSpeed;
+  const gusts = weather.current.windGusts;
+  const pressure = weather.current.pressure;
+  const maxGusts = weather.daily.windGustsMax[0] ?? gusts;
+
+  const indicators: RiskIndicator[] = [];
+
+  const windScore = Math.min(30, (windSpeed / 120) * 30);
+  indicators.push(makeIndicator("Wind Speed", `${windSpeed.toFixed(0)} km/h`, windScore, 30, "Sustained wind speed"));
+
+  const gustScore = Math.min(30, (gusts / 150) * 30);
+  indicators.push(makeIndicator("Wind Gusts", `${gusts.toFixed(0)} km/h`, gustScore, 30, "IMD: ≥60 km/h orange, ≥90 km/h red"));
+
+  const pressureScore = pressure < 1000 ? Math.min(25, ((1013 - pressure) / 40) * 25) : 5;
+  indicators.push(makeIndicator("Pressure", `${pressure.toFixed(0)} hPa`, pressureScore, 25, "Low pressure indicates cyclone/storm system"));
+
+  const forecastGustScore = Math.min(15, (maxGusts / 150) * 15);
+  indicators.push(makeIndicator("Forecast Max Gusts", `${maxGusts.toFixed(0)} km/h`, forecastGustScore, 15, "Maximum forecast gusts for today"));
+
+  const total = indicators.reduce((s, i) => s + i.contribution, 0);
+  return { hazard: "cyclone", score: clampScore(total), level: scoreToLevel(total), indicators };
+}
+
+export function assessExtremeRainfall(weather: WeatherData): RiskAssessment {
+  const hourlyRain = weather.hourly.rain.slice(0, 24);
+  const maxHourly = Math.max(...hourlyRain, 0);
+  const rain3day = weather.daily.rainSum.slice(0, 3).reduce((a, b) => a + (b ?? 0), 0);
+  const intensity = weather.current.rain;
+
+  const indicators: RiskIndicator[] = [];
+
+  const hourlyScore = Math.min(40, (maxHourly / 50) * 40);
+  indicators.push(makeIndicator("Max Hourly Rain", `${maxHourly.toFixed(1)} mm/hr`, hourlyScore, 40, ">20mm/hr is intense rainfall"));
+
+  const intensityScore = Math.min(25, (intensity / 30) * 25);
+  indicators.push(makeIndicator("Current Rain Rate", `${intensity.toFixed(1)} mm`, intensityScore, 25, "Current precipitation intensity"));
+
+  const accum3dScore = Math.min(20, (rain3day / 300) * 20);
+  indicators.push(makeIndicator("3-Day Accumulation", `${rain3day.toFixed(1)} mm`, accum3dScore, 20, "Cumulative rainfall over 3 days"));
+
+  const precipScore = Math.min(15, ((weather.daily.precipitationSum[0] ?? 0) / 200) * 15);
+  indicators.push(makeIndicator("24h Precipitation", `${(weather.daily.precipitationSum[0] ?? 0).toFixed(1)} mm`, precipScore, 15, "Total precipitation today"));
+
+  const total = indicators.reduce((s, i) => s + i.contribution, 0);
+  return { hazard: "extremeRainfall", score: clampScore(total), level: scoreToLevel(total), indicators };
+}
+
+export function assessEarthquake(lat: number, lon: number, events: DisasterEvent[]): RiskAssessment {
+  let nearestDist = Infinity;
+  let nearestMag = 0;
+  let nearestEvent: DisasterEvent | null = null;
+
+  for (const e of events) {
+    if (e.type !== "earthquake") continue;
+    const dist = haversineDistance(lat, lon, e.lat, e.lon);
+    if (dist < nearestDist) {
+      nearestDist = dist;
+      nearestMag = e.magnitude ?? 0;
+      nearestEvent = e;
+    }
+  }
+
+  const indicators: RiskIndicator[] = [];
+
+  if (nearestEvent) {
+    const proxScore = Math.max(0, 40 - (nearestDist / 500) * 40);
+    indicators.push(makeIndicator("Distance to Nearest Quake", `${nearestDist.toFixed(0)} km`, proxScore, 40, "Closer events have higher impact"));
+
+    const magScore = Math.min(40, (nearestMag / 8) * 40);
+    indicators.push(makeIndicator("Magnitude", `M${nearestMag.toFixed(1)}`, magScore, 40, "Higher magnitude = greater energy released"));
+
+    const depthScore = nearestEvent.depth
+      ? Math.min(20, (50 / Math.max(nearestEvent.depth, 5)) * 20)
+      : 10;
+    indicators.push(makeIndicator("Depth", nearestEvent.depth ? `${nearestEvent.depth.toFixed(0)} km` : "N/A", depthScore, 20, "Shallow quakes cause more surface damage"));
+  } else {
+    indicators.push(makeIndicator("Nearby Earthquakes", "None detected (24h)", 5, 40, "No recent seismic activity in vicinity"));
+    indicators.push(makeIndicator("Magnitude", "N/A", 0, 40, "No nearby event"));
+    indicators.push(makeIndicator("Depth", "N/A", 0, 20, "No nearby event"));
+  }
+
+  const total = indicators.reduce((s, i) => s + i.contribution, 0);
+  return { hazard: "earthquake", score: clampScore(total), level: scoreToLevel(total), indicators };
+}
+
+export function assessWildfire(lat: number, lon: number, events: DisasterEvent[], weather: WeatherData): RiskAssessment {
+  let nearestDist = Infinity;
+  let nearestEvent: DisasterEvent | null = null;
+
+  for (const e of events) {
+    if (e.type !== "wildfire") continue;
+    const dist = haversineDistance(lat, lon, e.lat, e.lon);
+    if (dist < nearestDist) {
+      nearestDist = dist;
+      nearestEvent = e;
+    }
+  }
+
+  const indicators: RiskIndicator[] = [];
+  const temp = weather.current.temperature;
+  const humidity = weather.current.humidity;
+
+  const proxScore = nearestEvent ? Math.max(0, 30 - (nearestDist / 200) * 30) : 0;
+  indicators.push(makeIndicator("Distance to Active Fire", nearestEvent ? `${nearestDist.toFixed(0)} km` : "None detected", proxScore, 30, "Proximity to active wildfire from NASA EONET"));
+
+  const tempScore = Math.min(25, ((temp - 25) / 20) * 25);
+  indicators.push(makeIndicator("Temperature", `${temp.toFixed(1)}°C`, Math.max(0, tempScore), 25, "High temperatures increase fire risk"));
+
+  const humidScore = Math.min(25, ((40 - humidity) / 40) * 25);
+  indicators.push(makeIndicator("Humidity", `${humidity.toFixed(0)}%`, Math.max(0, humidScore), 25, "Low humidity dries vegetation, increasing fire risk"));
+
+  const windScore = Math.min(20, (weather.current.windSpeed / 50) * 20);
+  indicators.push(makeIndicator("Wind Speed", `${weather.current.windSpeed.toFixed(0)} km/h`, windScore, 20, "Wind spreads fire rapidly"));
+
+  const total = indicators.reduce((s, i) => s + i.contribution, 0);
+  return { hazard: "wildfire", score: clampScore(total), level: scoreToLevel(total), indicators };
+}
+
+export function assessVolcano(lat: number, lon: number, events: DisasterEvent[]): RiskAssessment {
+  let nearestDist = Infinity;
+  let nearestEvent: DisasterEvent | null = null;
+
+  for (const e of events) {
+    if (e.type !== "volcano") continue;
+    const dist = haversineDistance(lat, lon, e.lat, e.lon);
+    if (dist < nearestDist) {
+      nearestDist = dist;
+      nearestEvent = e;
+    }
+  }
+
+  const indicators: RiskIndicator[] = [];
+  if (nearestEvent) {
+    const proxScore = Math.max(0, 60 - (nearestDist / 300) * 60);
+    indicators.push(makeIndicator("Distance to Active Volcano", `${nearestDist.toFixed(0)} km`, proxScore, 60, "Proximity to active volcanic eruption (NASA EONET)"));
+    indicators.push(makeIndicator("Eruption Status", "Active", 30, 30, "EONET reports ongoing volcanic activity"));
+    indicators.push(makeIndicator("Ash Fall Risk", nearestDist < 100 ? "High" : "Moderate", 10, 10, "Ash can travel hundreds of km downwind"));
+  } else {
+    indicators.push(makeIndicator("Active Volcanoes", "None detected nearby", 5, 60, "No EONET volcanic events in region"));
+    indicators.push(makeIndicator("Eruption Status", "N/A", 0, 30, "No nearby active eruptions"));
+    indicators.push(makeIndicator("Ash Fall Risk", "N/A", 0, 10, "No nearby eruption source"));
+  }
+
+  const total = indicators.reduce((s, i) => s + i.contribution, 0);
+  return { hazard: "volcano", score: clampScore(total), level: scoreToLevel(total), indicators };
+}
+
+export function assessLandslide(weather: WeatherData): RiskAssessment {
+  const rain24h = weather.daily.rainSum[0] ?? 0;
+  const rain72h = (weather.daily.rainSum[0] ?? 0) + (weather.daily.rainSum[1] ?? 0) + (weather.daily.rainSum[2] ?? 0);
+  const humidity = weather.current.humidity;
+
+  const indicators: RiskIndicator[] = [];
+
+  const rainScore = Math.min(40, (rain24h / 100) * 40);
+  indicators.push(makeIndicator("24h Rainfall", `${rain24h.toFixed(1)} mm`, rainScore, 40, "Heavy rainfall triggers landslides on slopes"));
+
+  const accumScore = Math.min(30, (rain72h / 200) * 30);
+  indicators.push(makeIndicator("72h Accumulation", `${rain72h.toFixed(1)} mm`, accumScore, 30, "Sustained rainfall saturates soil"));
+
+  const humidScore = Math.min(30, ((humidity - 60) / 40) * 30);
+  indicators.push(makeIndicator("Soil Moisture (proxy)", `${humidity.toFixed(0)}%`, Math.max(0, humidScore), 30, "High humidity indicates saturated soil"));
+
+  const total = indicators.reduce((s, i) => s + i.contribution, 0);
+  return { hazard: "landslide", score: clampScore(total), level: scoreToLevel(total), indicators };
+}
+
+export function assessDrought(weather: WeatherData, historical: HistoricalData | null): RiskAssessment {
+  const rain7day = weather.daily.rainSum.reduce((a, b) => a + (b ?? 0), 0);
+  const histAvgRain = historical && historical.rainfall.length > 0
+    ? historical.rainfall.reduce((a, b) => a + b, 0) / historical.rainfall.length
+    : 5;
+  const tempAvg = weather.daily.temperatureMax.reduce((a, b) => a + (b ?? 0), 0) / (weather.daily.temperatureMax.length || 1);
+
+  const indicators: RiskIndicator[] = [];
+
+  const rainDeficit = Math.max(0, 30 - (rain7day / 50) * 30);
+  indicators.push(makeIndicator("7-Day Rainfall", `${rain7day.toFixed(1)} mm`, rainDeficit, 30, "Low rainfall indicates dry conditions"));
+
+  const histScore = Math.max(0, 25 - (histAvgRain / 10) * 25);
+  indicators.push(makeIndicator("Historical Avg Rain", `${histAvgRain.toFixed(1)} mm/day`, histScore, 25, "Below-normal rainfall over 30 days"));
+
+  const tempScore = Math.min(25, ((tempAvg - 30) / 15) * 25);
+  indicators.push(makeIndicator("Avg Max Temperature", `${tempAvg.toFixed(1)}°C`, Math.max(0, tempScore), 25, "High temperatures increase evaporation"));
+
+  const dryDays = weather.daily.rainSum.filter((r) => (r ?? 0) < 1).length;
+  const dryScore = Math.min(20, (dryDays / 7) * 20);
+  indicators.push(makeIndicator("Dry Days (7d)", `${dryDays} days`, dryScore, 20, "Consecutive days without rain"));
+
+  const total = indicators.reduce((s, i) => s + i.contribution, 0);
+  return { hazard: "drought", score: clampScore(total), level: scoreToLevel(total), indicators };
+}
+
+export function assessColdWave(weather: WeatherData): RiskAssessment {
+  const tempMin = weather.daily.temperatureMin[0] ?? weather.current.temperature;
+  const tempCurrent = weather.current.temperature;
+  const windChill = tempCurrent - (weather.current.windSpeed / 10) * 0.5;
+
+  const indicators: RiskIndicator[] = [];
+
+  const minScore = Math.max(0, ((10 - tempMin) / 15) * 40);
+  indicators.push(makeIndicator("Min Temperature", `${tempMin.toFixed(1)}°C`, minScore, 40, "IMD: ≤10°C with wind is cold wave territory"));
+
+  const currentScore = Math.max(0, ((10 - tempCurrent) / 15) * 30);
+  indicators.push(makeIndicator("Current Temperature", `${tempCurrent.toFixed(1)}°C`, currentScore, 30, "Current cold exposure"));
+
+  const chillScore = Math.max(0, ((10 - windChill) / 15) * 30);
+  indicators.push(makeIndicator("Wind Chill", `${windChill.toFixed(1)}°C`, chillScore, 30, "Wind makes it feel colder than actual temperature"));
+
+  const total = indicators.reduce((s, i) => s + i.contribution, 0);
+  return { hazard: "coldWave", score: clampScore(total), level: scoreToLevel(total), indicators };
+}
+
+export interface FullRiskAssessment {
+  flood: RiskAssessment;
+  heatwave: RiskAssessment;
+  cyclone: RiskAssessment;
+  extremeRainfall: RiskAssessment;
+  earthquake: RiskAssessment;
+  wildfire: RiskAssessment;
+  volcano: RiskAssessment;
+  landslide: RiskAssessment;
+  drought: RiskAssessment;
+  coldWave: RiskAssessment;
+  overall: RiskAssessment;
+}
+
+export function assessAllRisks(
+  weather: WeatherData,
+  lat: number,
+  lon: number,
+  events: DisasterEvent[],
+  historical: HistoricalData | null,
+  riverDischarge: number | null
+): FullRiskAssessment {
+  const flood = assessFlood(weather, riverDischarge);
+  const heatwave = assessHeatwave(weather, historical);
+  const cyclone = assessCyclone(weather);
+  const extremeRainfall = assessExtremeRainfall(weather);
+  const earthquake = assessEarthquake(lat, lon, events);
+  const wildfire = assessWildfire(lat, lon, events, weather);
+  const volcano = assessVolcano(lat, lon, events);
+  const landslide = assessLandslide(weather);
+  const drought = assessDrought(weather, historical);
+  const coldWave = assessColdWave(weather);
+
+  const all = [flood, heatwave, cyclone, extremeRainfall, earthquake, wildfire, volcano, landslide, drought, coldWave];
+  const overallScore = Math.round(all.reduce((s, a) => Math.max(s, a.score), 0));
+  const overall: RiskAssessment = {
+    hazard: "flood",
+    score: overallScore,
+    level: scoreToLevel(overallScore),
+    indicators: all
+      .filter((a) => a.score >= 25)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+      .map((a) => ({
+        name: a.hazard.charAt(0).toUpperCase() + a.hazard.slice(1),
+        value: `${a.score}/100`,
+        contribution: a.score,
+        maxContribution: 100,
+        description: `Top contributing hazard`,
+      })),
+  };
+
+  return {
+    flood,
+    heatwave,
+    cyclone,
+    extremeRainfall,
+    earthquake,
+    wildfire,
+    volcano,
+    landslide,
+    drought,
+    coldWave,
+    overall,
+  };
+}
+
+
+//=== FILE: src/App.tsx ===
+import { useState, useEffect, useCallback, useRef } from "react";
+import { Globe2, Bell, LayoutDashboard, Info, Sun, Moon, Radio, Loader2 } from "lucide-react";
+import { ThemeProvider, useTheme } from "@/context/ThemeContext";
+import { LocationProvider, useLocation } from "@/context/LocationContext";
+import GlobeScene from "@/components/globe/GlobeScene";
+import LocationDetailPanel from "@/components/panels/LocationDetailPanel";
+import AlertCenter from "@/components/panels/AlertCenter";
+import Dashboard from "@/components/panels/Dashboard";
+import ImpactPage from "@/components/panels/ImpactPage";
+import SimulationControls from "@/components/panels/SimulationControls";
+import CitySearch from "@/components/ui/CitySearch";
+import LayerToggles from "@/components/ui/LayerToggles";
+import { CITIES, HAZARD_META, RISK_LEVEL_META } from "@/data/cities";
+import { SCENARIOS } from "@/data/scenarios";
+import {
+  fetchWeather, fetchAllDisasterEvents, fetchHistorical, fetchFloodData,
+  deriveWeatherAlerts, searchCity, type GeoResult,
+} from "@/lib/api";
+import { assessAllRisks, type FullRiskAssessment } from "@/lib/riskEngine";
+import type {
+  WeatherData, DisasterEvent, UnifiedAlert, RiskLevel, ScenarioId, HazardType, HistoricalData,
+} from "@/types";
+
+type View = "globe" | "alerts" | "dashboard" | "impact";
+
+const RISK_COLORS: Record<RiskLevel, string> = {
+  low: "#22c55e", moderate: "#eab308", high: "#f97316", severe: "#ef4444",
+};
+
+const DEFAULT_LAYERS: Record<string, boolean> = {
+  flood: true, heatwave: true, cyclone: true, extremeRainfall: true,
+  earthquake: true, wildfire: true, volcano: true, landslide: true,
+  drought: true, coldWave: true, officialAlerts: true,
+};
+
+function AppContent() {
+  const { mode, toggle } = useTheme();
+  const { selectedLocation, setSelectedLocation, flyTo, setFlyTo, watchlist, toggleWatchlist, isWatched } = useLocation();
+
+  const [view, setView] = useState<View>("globe");
+  const [scenarioId, setScenarioId] = useState<ScenarioId>("live");
+  const [simHour, setSimHour] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [layers, setLayers] = useState(DEFAULT_LAYERS);
+
+  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [weatherLoading, setWeatherLoading] = useState(false);
+  const [weatherError, setWeatherError] = useState<string | null>(null);
+  const [risks, setRisks] = useState<FullRiskAssessment | null>(null);
+  const [locationAlerts, setLocationAlerts] = useState<UnifiedAlert[]>([]);
+
+  const [disasterEvents, setDisasterEvents] = useState<DisasterEvent[]>([]);
+  const [globalAlerts, setGlobalAlerts] = useState<UnifiedAlert[]>([]);
+  const [feedsLoading, setFeedsLoading] = useState(true);
+  const [feedsError, setFeedsError] = useState<string | null>(null);
+
+  const [cityRiskLevels, setCityRiskLevels] = useState<{ id: string; name: string; lat: number; lon: number; level: RiskLevel; score: number }[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<DisasterEvent | null>(null);
+  const [customPin, setCustomPin] = useState<{ lat: number; lon: number } | null>(null);
+  const [nearMeActive, setNearMeActive] = useState(false);
+  const [showGlobePanel, setShowGlobePanel] = useState(true);
+  const [historical, setHistorical] = useState<HistoricalData | null>(null);
+  const [riverDischarge, setRiverDischarge] = useState<number | null>(null);
+  const [lastFeedUpdate, setLastFeedUpdate] = useState<number>(0);
+
+  const fetchWeatherForLocation = useCallback(async (lat: number, lon: number) => {
+    setWeatherLoading(true);
+    setWeatherError(null);
+    try {
+      const w = await fetchWeather(lat, lon);
+      setWeather(w);
+      const hist = await fetchHistorical(lat, lon);
+      setHistorical(hist);
+      const flood = await fetchFloodData(lat, lon);
+      setRiverDischarge(flood);
+    } catch (err) {
+      setWeatherError(err instanceof Error ? err.message : "Unknown error");
+    } finally {
+      setWeatherLoading(false);
+    }
+  }, []);
+
+  const loadFeeds = useCallback(async () => {
+    setFeedsLoading(true);
+    setFeedsError(null);
+    try {
+      const { earthquakes, eonetEvents, nwsAlerts } = await fetchAllDisasterEvents();
+      const allEvents = [...earthquakes, ...eonetEvents];
+      setDisasterEvents(allEvents);
+      setGlobalAlerts(nwsAlerts);
+      setLastFeedUpdate(Date.now());
+    } catch (err) {
+      setFeedsError(err instanceof Error ? err.message : "Failed to load feeds");
+    } finally {
+      setFeedsLoading(false);
+    }
+  }, []);
+
+  // Initial feed load
+  useEffect(() => {
+    loadFeeds();
+  }, [loadFeeds]);
+
+  // Auto-refresh feeds every 5 minutes
+  useEffect(() => {
+    const interval = setInterval(loadFeeds, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [loadFeeds]);
+
+  // Compute risk assessments when weather or events change
+  useEffect(() => {
+    if (!weather || !selectedLocation) return;
+    const assessments = assessAllRisks(weather, selectedLocation.lat, selectedLocation.lon, disasterEvents, historical, riverDischarge);
+    setRisks(assessments);
+    const derived = deriveWeatherAlerts(weather, selectedLocation.lat, selectedLocation.lon, selectedLocation.name);
+    setLocationAlerts(derived);
+  }, [weather, selectedLocation, disasterEvents, historical, riverDischarge]);
+
+  // Fetch weather when location changes
+  useEffect(() => {
+    if (!selectedLocation) return;
+    if (scenarioId === "live") {
+      fetchWeatherForLocation(selectedLocation.lat, selectedLocation.lon);
+    }
+  }, [selectedLocation, scenarioId, fetchWeatherForLocation]);
+
+  // Precompute city risk levels in background
+  useEffect(() => {
+    if (scenarioId !== "live") {
+      const scenario = SCENARIOS[scenarioId];
+      const levels = CITIES.map((city) => {
+        const event = scenario.events.find((e) =>
+          Math.abs(e.lat - city.lat) < 5 && Math.abs(e.lon - city.lon) < 5
+        );
+        if (event) {
+          const level = event.alertLevel ?? "severe";
+          return { id: city.id, name: city.name, lat: city.lat, lon: city.lon, level, score: level === "severe" ? 85 : 55 };
+        }
+        return { id: city.id, name: city.name, lat: city.lat, lon: city.lon, level: "low" as RiskLevel, score: 10 };
+      });
+      setCityRiskLevels(levels);
+      return;
+    }
+
+    let cancelled = false;
+    const computeCityRisks = async () => {
+      const results: { id: string; name: string; lat: number; lon: number; level: RiskLevel; score: number }[] = [];
+      for (const city of CITIES.slice(0, 8)) {
+        if (cancelled) return;
+        try {
+          const w = await fetchWeather(city.lat, city.lon);
+          const r = assessAllRisks(w, city.lat, city.lon, disasterEvents, null, null);
+          results.push({ id: city.id, name: city.name, lat: city.lat, lon: city.lon, level: r.overall.level, score: r.overall.score });
+        } catch {
+          results.push({ id: city.id, name: city.name, lat: city.lat, lon: city.lon, level: "low", score: 10 });
+        }
+      }
+      for (const city of CITIES.slice(8)) {
+        results.push({ id: city.id, name: city.name, lat: city.lat, lon: city.lon, level: "low", score: 10 });
+      }
+      if (!cancelled) setCityRiskLevels(results);
+    };
+    computeCityRisks();
+    return () => { cancelled = true; };
+  }, [scenarioId, disasterEvents]);
+
+  // Handle simulation scenario
+  const currentScenario = SCENARIOS[scenarioId];
+  const isSimulated = scenarioId !== "live";
+
+  useEffect(() => {
+    if (scenarioId === "live") return;
+    const scenario = SCENARIOS[scenarioId];
+    setFlyTo({ lat: scenario.centerLat, lon: scenario.centerLon });
+    setSelectedLocation({
+      id: `sim-${scenarioId}`,
+      name: scenario.events[0]?.location ?? scenario.name,
+      country: "India",
+      lat: scenario.centerLat,
+      lon: scenario.centerLon,
+    });
+    setWeather(scenario.weather);
+    setRisks(assessAllRisks(scenario.weather, scenario.centerLat, scenario.centerLon, scenario.events, null, null));
+    setLocationAlerts([]);
+    setSelectedEvent(scenario.events[0] ?? null);
+    setSimHour(0);
+    setIsPlaying(false);
+  }, [scenarioId, setFlyTo, setSelectedLocation]);
+
+  // Apply simulation timeline frame
+  useEffect(() => {
+    if (scenarioId === "live" || !currentScenario.timelineData.length) return;
+    const frame = currentScenario.timelineData[simHour];
+    if (!frame) return;
+    if (weather) {
+      setWeather({
+        ...weather,
+        current: { ...weather.current, ...frame.weather } as typeof weather.current,
+      });
+    }
+  }, [simHour, scenarioId, currentScenario, weather]);
+
+  // Handle globe click
+  const handleGlobeClick = useCallback((lat: number, lon: number) => {
+    setCustomPin({ lat, lon });
+    const name = `Custom (${lat.toFixed(2)}, ${lon.toFixed(2)})`;
+    setSelectedLocation({ id: `custom-${lat}-${lon}`, name, country: "", lat, lon, isCustom: true });
+    setSelectedEvent(null);
+  }, [setSelectedLocation]);
+
+  // Handle city search result
+  const handleSearchResult = useCallback((result: GeoResult) => {
+    setCustomPin({ lat: result.lat, lon: result.lon });
+    setFlyTo({ lat: result.lat, lon: result.lon });
+    setSelectedLocation({ id: `search-${result.lat}-${result.lon}`, name: result.name, country: result.country, lat: result.lat, lon: result.lon });
+    setSelectedEvent(null);
+  }, [setFlyTo, setSelectedLocation]);
+
+  // Handle marker click
+  const handleMarkerClick = useCallback((event: DisasterEvent) => {
+    setFlyTo({ lat: event.lat, lon: event.lon });
+    setSelectedLocation({ id: `event-${event.id}`, name: event.location, country: "", lat: event.lat, lon: event.lon });
+    setSelectedEvent(event);
+  }, [setFlyTo, setSelectedLocation]);
+
+  // Handle city marker click
+  const handleCityClick = useCallback((city: { id: string; name: string; lat: number; lon: number; country: string }) => {
+    setFlyTo({ lat: city.lat, lon: city.lon });
+    setSelectedLocation(city);
+    setSelectedEvent(null);
+  }, [setFlyTo, setSelectedLocation]);
+
+  // Handle alert click
+  const handleAlertClick = useCallback((alert: UnifiedAlert) => {
+    setView("globe");
+    setFlyTo({ lat: alert.lat, lon: alert.lon });
+    setSelectedLocation({ id: `alert-${alert.id}`, name: alert.location, country: "", lat: alert.lat, lon: alert.lon });
+    setSelectedEvent(null);
+  }, [setFlyTo, setSelectedLocation]);
+
+  // Near me
+  const handleNearMe = useCallback(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setNearMeActive(true);
+        setFlyTo({ lat: latitude, lon: longitude });
+        setCustomPin({ lat: latitude, lon: longitude });
+        setSelectedLocation({ id: "near-me", name: "My Location", country: "", lat: latitude, lon: longitude, isCustom: true });
+        setSelectedEvent(null);
+      },
+      () => {
+        alert("Location permission denied. Please enable geolocation to use this feature.");
+      }
+    );
+  }, [setFlyTo, setSelectedLocation]);
+
+  // Combine all alerts
+  const allAlerts: UnifiedAlert[] = [...globalAlerts, ...locationAlerts];
+
+  // Filter events and city markers by enabled layers
+  const visibleEvents = disasterEvents.filter((e) => {
+    const layerKey = e.type === "tsunami" ? "earthquake" : e.type;
+    return layers[layerKey] ?? true;
+  });
+
+  const visibleCityMarkers = CITIES.map((city) => {
+    const risk = cityRiskLevels.find((c) => c.id === city.id);
+    return {
+      ...city,
+      level: risk?.level ?? "low" as RiskLevel,
+    };
+  });
+
+  // Simulation timeline
+  const simTimeline = currentScenario.timelineData;
+  const simWeather = isSimulated ? currentScenario.weather : weather;
+
+  return (
+    <div className="flex h-screen flex-col overflow-hidden bg-[var(--bg-primary)]">
+      {/* Top Navigation Bar */}
+      <header className="flex items-center justify-between border-b border-white/10 bg-slate-900/80 backdrop-blur-xl px-4 py-2.5 z-50 flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <Globe2 className="h-6 w-6 text-blue-400" />
+              <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+            </div>
+            <div>
+              <h1 className="text-base font-bold text-white leading-none">TerraWatch</h1>
+              <p className="text-[9px] text-gray-500 leading-none mt-0.5">Climate Risk & Disaster Response</p>
+            </div>
+          </div>
+          <span className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide ${
+            isSimulated ? "bg-orange-500/20 text-orange-400" : "bg-green-500/20 text-green-400"
+          }`}>
+            {isSimulated ? "Simulated" : "Live"}
+          </span>
+        </div>
+
+        <nav className="flex items-center gap-1">
+          <NavButton active={view === "globe"} onClick={() => setView("globe")} icon={Globe2} label="Globe" />
+          <NavButton active={view === "alerts"} onClick={() => setView("alerts")} icon={Bell} label="Alerts" badge={allAlerts.length} />
+          <NavButton active={view === "dashboard"} onClick={() => setView("dashboard")} icon={LayoutDashboard} label="Dashboard" />
+          <NavButton active={view === "impact"} onClick={() => setView("impact")} icon={Info} label="Impact" />
+        </nav>
+
+        <div className="flex items-center gap-2">
+          <div className="hidden sm:block text-[10px] text-gray-500">
+            {feedsLoading ? (
+              <span className="flex items-center gap-1"><Loader2 className="h-3 w-3 animate-spin" /> Loading feeds...</span>
+            ) : feedsError ? (
+              <button onClick={loadFeeds} className="text-red-400 hover:underline">Retry feeds</button>
+            ) : (
+              <span>Updated {lastFeedUpdate ? new Date(lastFeedUpdate).toLocaleTimeString() : "—"}</span>
+            )}
+          </div>
+          <button
+            onClick={toggle}
+            className="rounded-lg p-2 text-gray-400 hover:bg-white/5 hover:text-white transition-colors"
+            title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {mode === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Globe View */}
+        {view === "globe" && (
+          <>
+            {/* Left Sidebar */}
+            <aside className="hidden md:flex w-64 flex-col gap-3 border-r border-white/10 bg-slate-900/60 backdrop-blur-xl p-3 overflow-y-auto flex-shrink-0">
+              <CitySearch onResult={handleSearchResult} />
+              <SimulationControls
+                scenarioId={scenarioId}
+                onScenarioChange={setScenarioId}
+                currentHour={simHour}
+                onHourChange={setSimHour}
+                isPlaying={isPlaying}
+                onPlayPause={() => setIsPlaying(!isPlaying)}
+                timeline={simTimeline}
+              />
+              <LayerToggles layers={layers} onToggle={(id) => setLayers((prev) => ({ ...prev, [id]: !prev[id] }))} />
+              <div className="text-[10px] text-gray-600 pt-2 border-t border-white/5">
+                <p className="flex items-center gap-1 mb-1"><Radio className="h-3 w-3" /> Data Sources</p>
+                <p>Open-Meteo, USGS, NASA EONET, NWS</p>
+                <p className="mt-1">Auto-refresh: every 5 min</p>
+              </div>
+            </aside>
+
+            {/* Globe Canvas */}
+            <div className="flex-1 relative min-w-0">
+              <GlobeScene
+                events={visibleEvents}
+                cityMarkers={visibleCityMarkers}
+                customPin={customPin}
+                onGlobeClick={handleGlobeClick}
+                onMarkerClick={handleMarkerClick}
+                onCityClick={handleCityClick}
+                flyTo={flyTo}
+                isLight={mode === "light"}
+              />
+
+              {/* Mobile overlay panel toggle */}
+              <button
+                onClick={() => setShowGlobePanel(!showGlobePanel)}
+                className="md:hidden absolute top-3 right-3 rounded-lg bg-slate-900/80 p-2 text-white backdrop-blur-xl border border-white/10 z-10"
+              >
+                <LayoutDashboard className="h-4 w-4" />
+              </button>
+
+              {/* Feeds status overlay */}
+              {feedsError && (
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-lg bg-red-500/20 backdrop-blur-xl border border-red-500/30 px-4 py-2 text-xs text-red-400 z-10">
+                  Some feeds failed to load. <button onClick={loadFeeds} className="underline font-semibold">Retry</button>
+                </div>
+              )}
+
+              {/* Mobile bottom sheet */}
+              {showGlobePanel && (
+                <div className="md:hidden absolute bottom-0 left-0 right-0 max-h-[60vh] rounded-t-2xl bg-slate-900/95 backdrop-blur-xl border-t border-white/10 overflow-y-auto z-10 animate-fade-in">
+                  <div className="p-3 space-y-3">
+                    <CitySearch onResult={handleSearchResult} />
+                    <SimulationControls
+                      scenarioId={scenarioId}
+                      onScenarioChange={setScenarioId}
+                      currentHour={simHour}
+                      onHourChange={setSimHour}
+                      isPlaying={isPlaying}
+                      onPlayPause={() => setIsPlaying(!isPlaying)}
+                      timeline={simTimeline}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Right Detail Panel */}
+            {selectedLocation && (
+              <aside className="hidden md:flex w-96 border-l border-white/10 bg-slate-900/60 backdrop-blur-xl flex-shrink-0 animate-fade-in">
+                <LocationDetailPanel
+                  locationName={selectedLocation.name}
+                  lat={selectedLocation.lat}
+                  lon={selectedLocation.lon}
+                  weather={simWeather}
+                  weatherLoading={weatherLoading && !isSimulated}
+                  weatherError={weatherError}
+                  risks={risks}
+                  alerts={locationAlerts}
+                  selectedEvent={selectedEvent}
+                  onRetry={() => fetchWeatherForLocation(selectedLocation.lat, selectedLocation.lon)}
+                  isWatched={isWatched(selectedLocation.id)}
+                  onToggleWatch={() => toggleWatchlist(selectedLocation)}
+                  onClose={() => { setSelectedLocation(null); setSelectedEvent(null); }}
+                  isSimulated={isSimulated}
+                />
+              </aside>
+            )}
+
+            {/* Mobile detail panel */}
+            {selectedLocation && (
+              <div className="md:hidden absolute inset-0 bg-slate-900/95 backdrop-blur-xl z-20 animate-fade-in overflow-y-auto">
+                <LocationDetailPanel
+                  locationName={selectedLocation.name}
+                  lat={selectedLocation.lat}
+                  lon={selectedLocation.lon}
+                  weather={simWeather}
+                  weatherLoading={weatherLoading && !isSimulated}
+                  weatherError={weatherError}
+                  risks={risks}
+                  alerts={locationAlerts}
+                  selectedEvent={selectedEvent}
+                  onRetry={() => fetchWeatherForLocation(selectedLocation.lat, selectedLocation.lon)}
+                  isWatched={isWatched(selectedLocation.id)}
+                  onToggleWatch={() => toggleWatchlist(selectedLocation)}
+                  onClose={() => { setSelectedLocation(null); setSelectedEvent(null); }}
+                  isSimulated={isSimulated}
+                />
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Alert Center View */}
+        {view === "alerts" && (
+          <div className="flex-1 overflow-hidden">
+            <div className="h-full bg-slate-900/60 backdrop-blur-xl">
+              <AlertCenter
+                alerts={allAlerts}
+                onAlertClick={handleAlertClick}
+                onNearMe={handleNearMe}
+                nearMeActive={nearMeActive}
+                watchlist={watchlist}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Dashboard View */}
+        {view === "dashboard" && (
+          <div className="flex-1 overflow-hidden">
+            <Dashboard
+              alerts={allAlerts}
+              events={disasterEvents}
+              cityRiskLevels={cityRiskLevels}
+              onCityClick={(city) => {
+                handleCityClick({ ...city, country: "" });
+                setView("globe");
+              }}
+            />
+          </div>
+        )}
+
+        {/* Impact Page View */}
+        {view === "impact" && (
+          <div className="flex-1 overflow-hidden">
+            <ImpactPage />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function NavButton({ active, onClick, icon: Icon, label, badge }: {
+  active: boolean;
+  onClick: () => void;
+  icon: typeof Globe2;
+  label: string;
+  badge?: number;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`relative flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+        active ? "bg-blue-500/20 text-blue-400" : "text-gray-400 hover:bg-white/5 hover:text-white"
+      }`}
+    >
+      <Icon className="h-4 w-4" />
+      <span className="hidden sm:inline">{label}</span>
+      {badge !== undefined && badge > 0 && (
+        <span className="absolute -top-1 -right-1 h-4 min-w-4 rounded-full bg-red-500 px-1 text-[9px] font-bold text-white flex items-center justify-center">
+          {badge > 99 ? "99+" : badge}
+        </span>
+      )}
+    </button>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <LocationProvider>
+        <AppContent />
+      </LocationProvider>
+    </ThemeProvider>
+  );
+}
+
+
+//=== FILE: src/components/globe/GlobeScene.tsx ===
+import { useRef, useMemo, useEffect } from "react";
+import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
+import { OrbitControls, Stars } from "@react-three/drei";
+import * as THREE from "three";
+import type { DisasterEvent, RiskLevel } from "@/types";
+import { useTheme } from "@/context/ThemeContext";
+
+const EARTH_RADIUS = 2;
+const ROTATION_SPEED = 0.03;
+
+function latLonToVector3(lat: number, lon: number, radius: number): THREE.Vector3 {
+  const phi = (90 - lat) * (Math.PI / 180);
+  const theta = (lon + 180) * (Math.PI / 180);
+  return new THREE.Vector3(
+    -(radius * Math.sin(phi) * Math.cos(theta)),
+    radius * Math.cos(phi),
+    radius * Math.sin(phi) * Math.sin(theta)
+  );
+}
+
+interface EarthProps {
+  onGlobeClick: (lat: number, lon: number) => void;
+  isLight: boolean;
+}
+
+function Earth({ onGlobeClick, isLight }: EarthProps) {
+  const meshRef = useRef<THREE.Mesh>(null);
+
+  const texture = useMemo(() => {
+    const loader = new THREE.TextureLoader();
+    const url = "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg";
+    return loader.load(url);
+  }, [isLight]);
+
+  const handleClick = (e: ThreeEvent<MouseEvent>) => {
+    e.stopPropagation();
+    const point = e.point.clone();
+    const local = e.object.worldToLocal(point);
+    const r = local.length();
+    const lat = 90 - (Math.acos(local.y / r) * 180) / Math.PI;
+    const lon = ((Math.atan2(local.z, -local.x) * 180) / Math.PI) - 180;
+    const normalizedLon = ((lon + 540) % 360) - 180;
+    onGlobeClick(lat, normalizedLon);
+  };
+
+  return (
+    <mesh ref={meshRef} onClick={handleClick}>
+      <sphereGeometry args={[EARTH_RADIUS, 64, 64]} />
+      <meshPhongMaterial map={texture} shininess={10} />
+    </mesh>
+  );
+}
+
+function Atmosphere({ isLight }: { isLight: boolean }) {
+  return (
+    <mesh scale={1.15}>
+      <sphereGeometry args={[EARTH_RADIUS, 48, 48]} />
+      <meshBasicMaterial
+        color={isLight ? "#4a9eff" : "#3b82f6"}
+        transparent
+        opacity={0.08}
+        side={THREE.BackSide}
+      />
+    </mesh>
+  );
+}
+
+function Clouds() {
+  const texture = useMemo(() => {
+    const loader = new THREE.TextureLoader();
+    return loader.load("https://unpkg.com/three-globe/example/img/earth-topology.png");
+  }, []);
+
+  return (
+    <mesh scale={1.01}>
+      <sphereGeometry args={[EARTH_RADIUS, 48, 48]} />
+      <meshPhongMaterial map={texture} transparent opacity={0.25} depthWrite={false} />
+    </mesh>
+  );
+}
+
+interface MarkerProps {
+  lat: number;
+  lon: number;
+  color: string;
+  size: number;
+  onClick: () => void;
+  pulse?: boolean;
+}
+
+function Marker({ lat, lon, color, size, onClick, pulse }: MarkerProps) {
+  const ref = useRef<THREE.Mesh>(null);
+  const position = useMemo(() => latLonToVector3(lat, lon, EARTH_RADIUS * 1.01), [lat, lon]);
+
+  useFrame((state) => {
+    if (ref.current && pulse) {
+      const s = size * (1 + Math.sin(state.clock.elapsedTime * 3) * 0.3);
+      ref.current.scale.setScalar(s);
+    }
+  });
+
+  return (
+    <mesh ref={ref} position={position} onClick={(e) => { e.stopPropagation(); onClick(); }}>
+      <sphereGeometry args={[size, 12, 12]} />
+      <meshBasicMaterial color={color} />
+    </mesh>
+  );
+}
+
+interface RingMarkerProps {
+  lat: number;
+  lon: number;
+  color: string;
+  size: number;
+  onClick: () => void;
+}
+
+function RingMarker({ lat, lon, color, size, onClick }: RingMarkerProps) {
+  const ref = useRef<THREE.Mesh>(null);
+  const position = useMemo(() => latLonToVector3(lat, lon, EARTH_RADIUS * 1.02), [lat, lon]);
+
+  useFrame((state) => {
+    if (ref.current) {
+      const t = (state.clock.elapsedTime * 1.5) % 1;
+      const s = 1 + t * 3;
+      ref.current.scale.setScalar(s);
+      (ref.current.material as THREE.MeshBasicMaterial).opacity = (1 - t) * 0.6;
+    }
+  });
+
+  const orientation = useMemo(() => {
+    const pos = latLonToVector3(lat, lon, EARTH_RADIUS);
+    const quaternion = new THREE.Quaternion();
+    quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), pos.normalize());
+    return quaternion;
+  }, [lat, lon]);
+
+  return (
+    <mesh ref={ref} position={position} quaternion={orientation} onClick={(e) => { e.stopPropagation(); onClick(); }}>
+      <ringGeometry args={[size * 0.8, size, 24]} />
+      <meshBasicMaterial color={color} transparent opacity={0.6} side={THREE.DoubleSide} />
+    </mesh>
+  );
+}
+
+interface PinMarkerProps {
+  lat: number;
+  lon: number;
+  color: string;
+  onClick: () => void;
+}
+
+function PinMarker({ lat, lon, color, onClick }: PinMarkerProps) {
+  const position = useMemo(() => latLonToVector3(lat, lon, EARTH_RADIUS * 1.02), [lat, lon]);
+  const stickEnd = useMemo(() => latLonToVector3(lat, lon, EARTH_RADIUS * 1.15), [lat, lon]);
+
+  return (
+    <group>
+      <mesh position={position} onClick={(e) => { e.stopPropagation(); onClick(); }}>
+        <sphereGeometry args={[0.04, 16, 16]} />
+        <meshBasicMaterial color={color} />
+      </mesh>
+      <mesh>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            args={[new Float32Array([position.x, position.y, position.z, stickEnd.x, stickEnd.y, stickEnd.z]), 3]}
+          />
+        </bufferGeometry>
+        <lineBasicMaterial color={color} linewidth={2} />
+      </mesh>
+    </group>
+  );
+}
+
+interface RotatingGroupProps {
+  children: React.ReactNode;
+}
+
+function RotatingGroup({ children }: RotatingGroupProps) {
+  const groupRef = useRef<THREE.Group>(null);
+
+  useFrame((_, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y += delta * ROTATION_SPEED;
+    }
+  });
+
+  return <group ref={groupRef}>{children}</group>;
+}
+
+interface FlyToControllerProps {
+  target: { lat: number; lon: number } | null;
+  controlsRef: React.RefObject<{ target: THREE.Vector3 } | null>;
+}
+
+function FlyToController({ target, controlsRef }: FlyToControllerProps) {
+  const { camera } = useThree();
+  const animatingRef = useRef(false);
+  const targetRef = useRef(new THREE.Vector3());
+  const startRef = useRef(new THREE.Vector3());
+  const progressRef = useRef(0);
+
+  useEffect(() => {
+    if (!target) return;
+    const pos = latLonToVector3(target.lat, target.lon, EARTH_RADIUS * 3.5);
+    startRef.current.copy(camera.position);
+    targetRef.current.copy(pos);
+    progressRef.current = 0;
+    animatingRef.current = true;
+  }, [target, camera]);
+
+  useFrame((_, delta) => {
+    if (!animatingRef.current) return;
+    progressRef.current = Math.min(1, progressRef.current + delta * 1.5);
+    const t = 1 - Math.pow(1 - progressRef.current, 3);
+    camera.position.lerpVectors(startRef.current, targetRef.current, t);
+    if (controlsRef.current) {
+      controlsRef.current.target.set(0, 0, 0);
+    }
+    if (progressRef.current >= 1) animatingRef.current = false;
+  });
+
+  return null;
+}
+
+interface GlobeProps {
+  events: DisasterEvent[];
+  cityMarkers: { lat: number; lon: number; level: RiskLevel; name: string; id: string }[];
+  customPin: { lat: number; lon: number } | null;
+  onGlobeClick: (lat: number, lon: number) => void;
+  onMarkerClick: (event: DisasterEvent) => void;
+  onCityClick: (city: { id: string; name: string; lat: number; lon: number; country: string }) => void;
+  flyTo: { lat: number; lon: number } | null;
+  isLight: boolean;
+}
+
+const RISK_COLORS: Record<RiskLevel, string> = {
+  low: "#22c55e",
+  moderate: "#eab308",
+  high: "#f97316",
+  severe: "#ef4444",
+};
+
+export default function GlobeScene({
+  events,
+  cityMarkers,
+  customPin,
+  onGlobeClick,
+  onMarkerClick,
+  onCityClick,
+  flyTo,
+  isLight,
+}: GlobeProps) {
+  const controlsRef = useRef<{ target: THREE.Vector3 } | null>(null);
+  const { mode } = useTheme();
+
+  return (
+    <Canvas
+      camera={{ position: [0, 0, 6], fov: 45 }}
+      gl={{ antialias: true, alpha: true }}
+      style={{ width: "100%", height: "100%" }}
+    >
+      <ambientLight intensity={isLight ? 1.2 : 0.9} />
+      <directionalLight position={[5, 3, 5]} intensity={isLight ? 2.5 : 2.2} />
+      <pointLight position={[-5, -3, -5]} intensity={0.6} color="#4a9eff" />
+
+      {!isLight && <Stars radius={100} depth={50} count={3000} factor={4} fade speed={0} />}
+
+      <RotatingGroup>
+        <Earth onGlobeClick={onGlobeClick} isLight={isLight} />
+        <Clouds />
+        <Atmosphere isLight={isLight} />
+
+        {cityMarkers.map((city) => (
+          <Marker
+            key={city.id}
+            lat={city.lat}
+            lon={city.lon}
+            color={RISK_COLORS[city.level]}
+            size={0.035}
+            pulse={city.level === "severe" || city.level === "high"}
+            onClick={() => onCityClick({ id: city.id, name: city.name, lat: city.lat, lon: city.lon, country: "" })}
+          />
+        ))}
+
+        {events.slice(0, 50).map((event) => {
+          const color = RISK_COLORS[event.alertLevel ?? event.riskLevel ?? "moderate"];
+          const size = event.magnitude ? Math.max(0.03, Math.min(0.12, event.magnitude / 80)) : 0.04;
+          return (
+            <RingMarker
+              key={event.id}
+              lat={event.lat}
+              lon={event.lon}
+              color={color}
+              size={size}
+              onClick={() => onMarkerClick(event)}
+            />
+          );
+        })}
+
+        {customPin && (
+          <PinMarker
+            lat={customPin.lat}
+            lon={customPin.lon}
+            color="#3b82f6"
+            onClick={() => onGlobeClick(customPin.lat, customPin.lon)}
+          />
+        )}
+      </RotatingGroup>
+
+      <FlyToController target={flyTo} controlsRef={controlsRef} />
+
+      <OrbitControls
+        ref={controlsRef as never}
+        enablePan={false}
+        minDistance={3}
+        maxDistance={10}
+        rotateSpeed={0.5}
+        zoomSpeed={0.8}
+      />
+    </Canvas>
+  );
+}
+
+
+//=== FILE: src/components/panels/AlertCenter.tsx ===
+import { useState, useMemo } from "react";
+import { Filter, Navigation, Clock, ExternalLink, X, ChevronDown } from "lucide-react";
+import type { UnifiedAlert, HazardType, AlertSeverity } from "@/types";
+import { SeverityBadge, SourceBadge, RiskBadge } from "@/components/ui/AlertBadge";
+import { LAYER_DEFINITIONS } from "@/components/ui/LayerToggles";
+
+interface AlertCenterProps {
+  alerts: UnifiedAlert[];
+  onAlertClick: (alert: UnifiedAlert) => void;
+  onNearMe: () => void;
+  nearMeActive: boolean;
+  watchlist: { id: string; name: string; lat: number; lon: number }[];
+}
+
+const SEVERITY_ORDER: Record<AlertSeverity, number> = {
+  emergency: 0, warning: 1, watch: 2, advisory: 3,
+};
+
+export default function AlertCenter({ alerts, onAlertClick, onNearMe, nearMeActive, watchlist }: AlertCenterProps) {
+  const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [severityFilter, setSeverityFilter] = useState<string>("all");
+  const [sourceFilter, setSourceFilter] = useState<string>("all");
+  const [regionFilter, setRegionFilter] = useState<string>("all");
+  const [showFilters, setShowFilters] = useState(true);
+  const [showWatchlist, setShowWatchlist] = useState(false);
+
+  const sources = useMemo(() => {
+    const set = new Set(alerts.map((a) => a.source));
+    return Array.from(set);
+  }, [alerts]);
+
+  const filtered = useMemo(() => {
+    return alerts
+      .filter((a) => {
+        if (typeFilter !== "all" && a.type !== typeFilter && !(typeFilter === "official" && a.type === "official")) return false;
+        if (severityFilter !== "all" && a.severity !== severityFilter) return false;
+        if (sourceFilter !== "all" && a.source !== sourceFilter) return false;
+        if (regionFilter !== "all") {
+          const lower = a.location.toLowerCase();
+          if (regionFilter === "india" && !lower.includes("india") && !lower.match(/chennai|mumbai|delhi|kolkata|assam|guwahati|bhubaneswar|bangalore|hyderabad|dhaka/)) return false;
+          if (regionFilter === "us" && !lower.includes("united states") && !lower.match(/county|state|texas|california|florida|new york/i)) return false;
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        const sevDiff = SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity];
+        if (sevDiff !== 0) return sevDiff;
+        return new Date(b.time).getTime() - new Date(a.time).getTime();
+      });
+  }, [alerts, typeFilter, severityFilter, sourceFilter, regionFilter]);
+
+  return (
+    <div className="flex h-full flex-col">
+      {/* Header */}
+      <div className="border-b border-white/10 px-4 py-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-white flex items-center gap-2">
+            <Filter className="h-5 w-5 text-blue-400" />
+            Alert Center
+          </h2>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onNearMe}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                nearMeActive ? "bg-blue-500/20 text-blue-400" : "bg-white/5 text-gray-400 hover:text-white"
+              }`}
+            >
+              <Navigation className="h-3.5 w-3.5" />
+              Near Me
+            </button>
+            <button
+              onClick={() => setShowWatchlist(!showWatchlist)}
+              className="flex items-center gap-1.5 rounded-lg bg-white/5 px-3 py-1.5 text-xs font-medium text-gray-400 hover:text-white"
+            >
+              Watchlist ({watchlist.length})
+            </button>
+          </div>
+        </div>
+
+        {showWatchlist && watchlist.length > 0 && (
+          <div className="mt-2 space-y-1 rounded-lg bg-slate-800/50 p-2">
+            {watchlist.map((w) => (
+              <button
+                key={w.id}
+                onClick={() => onAlertClick({ id: w.id, type: "official", title: w.name, description: "", severity: "advisory", riskLevel: "low", source: "open-meteo", sourceLabel: "Watchlist", time: new Date().toISOString(), lat: w.lat, lon: w.lon, location: w.name } as UnifiedAlert)}
+                className="flex w-full items-center gap-2 rounded px-2 py-1 text-xs text-gray-300 hover:bg-white/5"
+              >
+                <Navigation className="h-3 w-3 text-yellow-400" />
+                {w.name}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className="mt-2 flex items-center gap-1 text-xs text-gray-500 hover:text-gray-300"
+        >
+          <ChevronDown className={`h-3 w-3 transition-transform ${showFilters ? "rotate-180" : ""}`} />
+          {showFilters ? "Hide" : "Show"} Filters
+        </button>
+
+        {showFilters && (
+          <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <FilterSelect label="Type" value={typeFilter} onChange={setTypeFilter} options={[
+              { value: "all", label: "All Types" },
+              ...LAYER_DEFINITIONS.filter(l => l.id !== "officialAlerts").map(l => ({ value: l.id, label: l.label })),
+              { value: "official", label: "Official" },
+            ]} />
+            <FilterSelect label="Severity" value={severityFilter} onChange={setSeverityFilter} options={[
+              { value: "all", label: "All Severity" },
+              { value: "emergency", label: "Emergency" },
+              { value: "warning", label: "Warning" },
+              { value: "watch", label: "Watch" },
+              { value: "advisory", label: "Advisory" },
+            ]} />
+            <FilterSelect label="Source" value={sourceFilter} onChange={setSourceFilter} options={[
+              { value: "all", label: "All Sources" },
+              ...sources.map(s => ({ value: s, label: s })),
+            ]} />
+            <FilterSelect label="Region" value={regionFilter} onChange={setRegionFilter} options={[
+              { value: "all", label: "All Regions" },
+              { value: "india", label: "India" },
+              { value: "us", label: "United States" },
+            ]} />
+          </div>
+        )}
+      </div>
+
+      {/* Alert List */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-4 py-2 text-xs text-gray-500 border-b border-white/5">
+          {filtered.length} alert{filtered.length !== 1 ? "s" : ""} {filtered.length !== alerts.length && `(of ${alerts.length})`}
+        </div>
+        {filtered.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-gray-600">
+            <Filter className="h-8 w-8 mb-2" />
+            <p className="text-sm">No alerts match your filters</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-white/5">
+            {filtered.map((alert) => (
+              <button
+                key={alert.id}
+                onClick={() => onAlertClick(alert)}
+                className="w-full px-4 py-3 text-left hover:bg-white/5 transition-colors"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+                      <SeverityBadge severity={alert.severity} />
+                      <SourceBadge source={alert.source} />
+                    </div>
+                    <h3 className="text-sm font-semibold text-white truncate">{alert.title}</h3>
+                    <p className="text-xs text-gray-400 mt-0.5 line-clamp-2">{alert.description}</p>
+                    <div className="flex items-center gap-3 mt-1 text-[10px] text-gray-600">
+                      <span className="flex items-center gap-0.5">
+                        <Clock className="h-2.5 w-2.5" />
+                        {new Date(alert.time).toLocaleString()}
+                      </span>
+                      <span>{alert.location}</span>
+                    </div>
+                  </div>
+                  {alert.sourceUrl && <ExternalLink className="h-3 w-3 text-gray-600 flex-shrink-0 mt-1" />}
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function FilterSelect({ label, value, onChange, options }: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string }[];
+}) {
+  return (
+    <div>
+      <label className="text-[10px] font-medium uppercase tracking-wider text-gray-500 mb-0.5 block">{label}</label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-lg border border-white/10 bg-slate-900/80 px-2 py-1.5 text-xs text-white outline-none focus:border-blue-500/50"
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>{o.label}</option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+
+//=== FILE: src/components/panels/Dashboard.tsx ===
+import { useState, useEffect } from "react";
+import { CheckSquare, Square, TrendingUp, AlertTriangle, Activity, Globe2 } from "lucide-react";
+import type { UnifiedAlert, DisasterEvent, RiskLevel, PreparednessItem } from "@/types";
+import { RISK_LEVEL_META } from "@/data/cities";
+import { SeverityBadge, SourceBadge } from "@/components/ui/AlertBadge";
+
+interface DashboardProps {
+  alerts: UnifiedAlert[];
+  events: DisasterEvent[];
+  cityRiskLevels: { id: string; name: string; lat: number; lon: number; level: RiskLevel; score: number }[];
+  onCityClick: (city: { id: string; name: string; lat: number; lon: number }) => void;
+}
+
+const PREPAREDNESS_ITEMS: Omit<PreparednessItem, "done">[] = [
+  { id: "kit", label: "Emergency kit ready (water, food, first aid, documents)" },
+  { id: "contacts", label: "Emergency contact numbers saved (112, 1078, 108)" },
+  { id: "evac", label: "Know evacuation routes and shelter locations" },
+  { id: "battery", label: "Phone charged and power bank ready" },
+  { id: "radio", label: "Battery radio for emergency broadcasts" },
+  { id: "meds", label: "Essential medications stocked for 7 days" },
+  { id: "family", label: "Family communication plan established" },
+  { id: "docs", label: "Important documents in waterproof container" },
+];
+
+export default function Dashboard({ alerts, events, cityRiskLevels, onCityClick }: DashboardProps) {
+  const [items, setItems] = useState<PreparednessItem[]>(() => {
+    try {
+      const saved = localStorage.getItem("terrwatch-preparedness");
+      if (saved) return JSON.parse(saved);
+    } catch { /* ignore */ }
+    return PREPAREDNESS_ITEMS.map((i) => ({ ...i, done: false }));
+  });
+
+  useEffect(() => {
+    localStorage.setItem("terrwatch-preparedness", JSON.stringify(items));
+  }, [items]);
+
+  const toggleItem = (id: string) => {
+    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, done: !i.done } : i)));
+  };
+
+  const counts = {
+    severe: cityRiskLevels.filter((c) => c.level === "severe").length,
+    high: cityRiskLevels.filter((c) => c.level === "high").length,
+    moderate: cityRiskLevels.filter((c) => c.level === "moderate").length,
+    low: cityRiskLevels.filter((c) => c.level === "low").length,
+  };
+
+  const ranked = [...cityRiskLevels].sort((a, b) => b.score - a.score).slice(0, 10);
+  const completedCount = items.filter((i) => i.done).length;
+
+  return (
+    <div className="space-y-4 p-4 overflow-y-auto h-full">
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <StatCard icon={AlertTriangle} label="Severe Risk" value={counts.severe} color={RISK_LEVEL_META.severe.color} />
+        <StatCard icon={Activity} label="High Risk" value={counts.high} color={RISK_LEVEL_META.high.color} />
+        <StatCard icon={Globe2} label="Moderate Risk" value={counts.moderate} color={RISK_LEVEL_META.moderate.color} />
+        <StatCard icon={TrendingUp} label="Active Alerts" value={alerts.length} color="#3b82f6" />
+      </div>
+
+      {/* Ranked cities */}
+      <div className="rounded-xl border border-white/10 bg-slate-900/60 p-3">
+        <h3 className="text-sm font-semibold text-white mb-3">Highest Risk Locations</h3>
+        <div className="space-y-1">
+          {ranked.map((city, i) => {
+            const meta = RISK_LEVEL_META[city.level];
+            return (
+              <button
+                key={city.id}
+                onClick={() => onCityClick(city)}
+                className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-white/5 transition-colors"
+              >
+                <span className="text-xs font-bold text-gray-600 w-4">{i + 1}</span>
+                <span className="flex-1 text-sm font-medium text-white truncate">{city.name}</span>
+                <span className="h-1.5 w-20 rounded-full bg-white/10 overflow-hidden">
+                  <span className="block h-full rounded-full" style={{ width: `${city.score}%`, backgroundColor: meta.color }} />
+                </span>
+                <span className="text-xs font-bold w-8 text-right" style={{ color: meta.color }}>{city.score}</span>
+                <span
+                  className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase"
+                  style={{ backgroundColor: `${meta.color}20`, color: meta.color }}
+                >
+                  {meta.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Live alert feed */}
+      <div className="rounded-xl border border-white/10 bg-slate-900/60 p-3">
+        <h3 className="text-sm font-semibold text-white mb-3">Live Alert Feed</h3>
+        {alerts.length === 0 ? (
+          <p className="text-xs text-gray-600 py-4 text-center">No active alerts</p>
+        ) : (
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {alerts.slice(0, 15).map((alert) => (
+              <div key={alert.id} className="rounded-lg bg-slate-800/50 p-2.5">
+                <div className="flex items-start justify-between gap-2">
+                  <span className="text-xs font-medium text-white flex-1 truncate">{alert.title}</span>
+                  <SeverityBadge severity={alert.severity} />
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <SourceBadge source={alert.source} />
+                  <span className="text-[10px] text-gray-600">{new Date(alert.time).toLocaleTimeString()}</span>
+                  <span className="text-[10px] text-gray-600 truncate">{alert.location}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Preparedness Checklist */}
+      <div className="rounded-xl border border-white/10 bg-slate-900/60 p-3">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-semibold text-white">Preparedness Checklist</h3>
+          <span className="text-xs text-gray-500">{completedCount}/{items.length} done</span>
+        </div>
+        <div className="space-y-1">
+          {items.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => toggleItem(item.id)}
+              className="flex w-full items-start gap-2 rounded-lg px-2 py-1.5 text-left hover:bg-white/5 transition-colors"
+            >
+              {item.done ? (
+                <CheckSquare className="h-4 w-4 text-green-400 flex-shrink-0 mt-0.5" />
+              ) : (
+                <Square className="h-4 w-4 text-gray-600 flex-shrink-0 mt-0.5" />
+              )}
+              <span className={`text-xs ${item.done ? "text-gray-500 line-through" : "text-gray-300"}`}>
+                {item.label}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ icon: Icon, label, value, color }: { icon: typeof AlertTriangle; label: string; value: number; color: string }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-slate-900/60 p-3">
+      <Icon className="h-5 w-5 mb-1" style={{ color }} />
+      <div className="text-2xl font-bold text-white">{value}</div>
+      <div className="text-xs text-gray-500">{label}</div>
+    </div>
+  );
+}
+
+
+//=== FILE: src/components/panels/ImpactPage.tsx ===
+import { Globe2, Satellite, Smartphone, Languages, Building2, Zap, Shield, TrendingUp, Database, Cpu, Info } from "lucide-react";
+
+export default function ImpactPage() {
+  return (
+    <div className="h-full overflow-y-auto p-6">
+      <div className="max-w-3xl mx-auto space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-white mb-1">Impact & Scalability</h1>
+          <p className="text-sm text-gray-400">Real-world value, data transparency, and growth path for TerraWatch</p>
+        </div>
+
+        {/* Real-world impact */}
+        <section className="rounded-xl border border-white/10 bg-slate-900/60 p-5">
+          <h2 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+            <Shield className="h-5 w-5 text-green-400" />
+            Real-World Impact
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <ImpactCard icon={Zap} title="Earlier Warnings" text="By combining live weather data with threshold-based derived alerts, TerraWatch can flag developing hazards hours before official warnings are issued, giving communities critical preparation time." />
+            <ImpactCard icon={TrendingUp} title="Lives Saved" text="Even a 30-minute early warning for cyclones, floods, and tsunamis can reduce casualties by up to 50%. Real-time earthquake and wildfire proximity alerts help people evacuate faster." />
+            <ImpactCard icon={Building2} title="Better Resource Planning" text="Authorities can pre-position NDRF teams, emergency supplies, and medical resources based on risk scores. The authority response guidance provides actionable checklists for each hazard level." />
+            <ImpactCard icon={Globe2} title="Global Coverage" text="Using free, no-API-key data sources (Open-Meteo, USGS, NASA EONET, NWS), TerraWatch works for any location on Earth. The risk engine adapts thresholds to local conditions." />
+          </div>
+        </section>
+
+        {/* Scalability */}
+        <section className="rounded-xl border border-white/10 bg-slate-900/60 p-5">
+          <h2 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-blue-400" />
+            Scalability Path
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <ImpactCard icon={Satellite} title="Satellite & IMD/NASA Data" text="Integrate IMD radar, INSAT satellite imagery, and NASA MODIS fire data for richer hazard detection. Add GDACS RSS for global multi-hazard alerts with Red/Orange/Green levels." />
+            <ImpactCard icon={Cpu} title="IoT Sensor Integration" text="Connect river level sensors, rain gauges, and seismic monitors for hyper-local real-time data. Edge devices in rural areas can feed the risk engine directly." />
+            <ImpactCard icon={Smartphone} title="SMS Alerts for Low-Connectivity" text="Integrate with SMS gateways (Twilio, MSG91) to send alerts to areas without internet. The copy-to-WhatsApp feature is a first step toward this. USSD-based alerts for feature phones." />
+            <ImpactCard icon={Languages} title="Multilingual Support" text="Add Hindi, Tamil, Bengali, Marathi, and other regional languages. Safety guidance and alert messages can be localized. Voice alerts for accessibility." />
+            <ImpactCard icon={Building2} title="Government Dashboards" text="Deploy as a white-label dashboard for state disaster management authorities. Role-based access for NDRF, SDMA, and district administrations. Integration with existing emergency response systems." />
+            <ImpactCard icon={Database} title="More Hazard Types" text="Add avalanche, dust storm, lightning, and heat island effects. Machine learning models can improve risk score accuracy over time with historical data training." />
+          </div>
+        </section>
+
+        {/* Data transparency */}
+        <section className="rounded-xl border border-white/10 bg-slate-900/60 p-5">
+          <h2 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+            <Info className="h-5 w-5 text-yellow-400" />
+            Data Sources & Transparency
+          </h2>
+          <div className="space-y-3 text-sm">
+            <DataSourceRow label="REAL DATA (live APIs, no key needed)" items={[
+              "Open-Meteo Forecast API — current weather, hourly, 7-day forecast",
+              "Open-Meteo Archive API — historical rainfall and temperature (30 days)",
+              "Open-Meteo Flood API — river discharge data",
+              "Open-Meteo Geocoding API — city search",
+              "USGS Earthquake Feed — all earthquakes (24h) and M4.5+ (week)",
+              "NASA EONET v3 — wildfires, volcanoes, storms, floods, drought, landslides",
+              "NWS Alerts API — official US weather warnings with severity and instructions",
+            ]} color="text-green-400" />
+            <DataSourceRow label="DERIVED DATA (computed from forecasts)" items={[
+              "Heavy rain warnings: >64.5mm/24h (Orange), >115.6mm/24h (Red) — IMD thresholds",
+              "Heatwave warnings: ≥40°C or 4.5°C above historical normal",
+              "Strong wind warnings: gusts ≥60 km/h (Orange), ≥90 km/h (Red)",
+              "Dense fog advisories: visibility <1000m",
+              "Extreme rainfall: >20mm/hr intensity",
+              "All derived alerts are clearly labeled 'Derived from forecast, not an official warning'",
+            ]} color="text-pink-400" />
+            <DataSourceRow label="SIMULATED DATA (for demo)" items={[
+              "Chennai Cyclone — M120 winds, 980 hPa pressure, 120mm rainfall",
+              "Assam Flood — 200mm/72h rainfall, Brahmaputra overflow",
+              "Delhi Heatwave — 47°C, 6.5°C above normal, 5 consecutive days",
+              "Mumbai Extreme Rainfall — 250mm/24h, severe waterlogging",
+              "Himalayan Earthquake — M6.8, 35km depth, tsunami warning",
+              "All simulated data is clearly marked with a SIMULATED badge",
+            ]} color="text-orange-400" />
+          </div>
+        </section>
+
+        {/* Demo scenario note */}
+        <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-4">
+          <h3 className="text-sm font-semibold text-blue-400 mb-1">Demo Scenario for Judges</h3>
+          <p className="text-xs text-gray-400">
+            Switch to "Chennai Cyclone" in Simulation Mode to see the full system in action:
+            wind speeds, pressure drop, rainfall, and risk scores evolving hour by hour on the time slider,
+            with safety guidance and emergency response instructions for residents and authorities.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ImpactCard({ icon: Icon, title, text }: { icon: typeof Globe2; title: string; text: string }) {
+  return (
+    <div className="rounded-lg bg-slate-800/50 p-3">
+      <Icon className="h-5 w-5 text-blue-400 mb-2" />
+      <h3 className="text-sm font-semibold text-white mb-1">{title}</h3>
+      <p className="text-xs text-gray-400 leading-relaxed">{text}</p>
+    </div>
+  );
+}
+
+function DataSourceRow({ label, items, color }: { label: string; items: string[]; color: string }) {
+  return (
+    <div>
+      <h4 className={`text-xs font-bold uppercase tracking-wide mb-1.5 ${color}`}>{label}</h4>
+      <ul className="space-y-1 pl-4">
+        {items.map((item, i) => (
+          <li key={i} className="text-xs text-gray-400 list-disc">{item}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+
+//=== FILE: src/components/panels/LocationDetailPanel.tsx ===
+import { useState, useEffect } from "react";
+import {
+  X, Thermometer, Droplets, Wind, Eye, Gauge, Cloud, CloudRain, Copy, Check,
+  Phone, AlertTriangle, ChevronDown, ChevronUp, ExternalLink, MapPin,
+  Clock, Heart, Shield, Users, Building2, Navigation, Plus, Flame, Home, Pill, Search,
+} from "lucide-react";
+import type { WeatherData, RiskAssessment, DisasterEvent, UnifiedAlert, HazardType } from "@/types";
+import { RISK_LEVEL_META, HAZARD_META, SAFETY_GUIDANCE, EMERGENCY_CONTACTS, NEARBY_EMERGENCY_SERVICES } from "@/data/cities";
+
+const SERVICE_ICON_MAP: Record<string, typeof Shield> = {
+  Plus, Shield, Flame, Home, Pill, Droplets,
+};
+import RiskGauge from "@/components/ui/RiskGauge";
+import ForecastChart from "@/components/ui/ForecastChart";
+import { SeverityBadge, SourceBadge, SimulatedBadge } from "@/components/ui/AlertBadge";
+import { getHazardIcon } from "@/components/ui/HazardIcon";
+import type { FullRiskAssessment } from "@/lib/riskEngine";
+
+interface LocationDetailPanelProps {
+  locationName: string;
+  lat: number;
+  lon: number;
+  weather: WeatherData | null;
+  weatherLoading: boolean;
+  weatherError: string | null;
+  risks: FullRiskAssessment | null;
+  alerts: UnifiedAlert[];
+  selectedEvent: DisasterEvent | null;
+  onRetry: () => void;
+  isWatched: boolean;
+  onToggleWatch: () => void;
+  onClose: () => void;
+  isSimulated?: boolean;
+}
+
+const WEATHER_CODE_MAP: Record<number, string> = {
+  0: "Clear sky", 1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
+  45: "Fog", 48: "Rime fog", 51: "Light drizzle", 53: "Moderate drizzle",
+  55: "Dense drizzle", 61: "Slight rain", 63: "Moderate rain", 65: "Heavy rain",
+  66: "Freezing rain", 71: "Slight snow", 73: "Moderate snow", 75: "Heavy snow",
+  77: "Snow grains", 80: "Rain showers", 81: "Heavy showers", 82: "Violent showers",
+  85: "Snow showers", 86: "Heavy snow showers", 95: "Thunderstorm", 96: "Thunderstorm hail",
+  99: "Severe thunderstorm",
+};
+
+const HAZARD_ORDER: HazardType[] = ["flood", "heatwave", "cyclone", "extremeRainfall", "earthquake", "wildfire", "volcano", "landslide", "drought", "coldWave"];
+
+export default function LocationDetailPanel({
+  locationName,
+  lat,
+  lon,
+  weather,
+  weatherLoading,
+  weatherError,
+  risks,
+  alerts,
+  selectedEvent,
+  onRetry,
+  isWatched,
+  onToggleWatch,
+  onClose,
+  isSimulated,
+}: LocationDetailPanelProps) {
+  const [chartType, setChartType] = useState<"temperature" | "rain" | "wind">("temperature");
+  const [expandedHazard, setExpandedHazard] = useState<HazardType | null>(null);
+  const [showGuidance, setShowGuidance] = useState<HazardType | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const overallLevel = risks?.overall.level ?? "low";
+  const overallScore = risks?.overall.score ?? 0;
+  const overallMeta = RISK_LEVEL_META[overallLevel];
+
+  const topAlert = alerts[0];
+  const alertBannerText = topAlert
+    ? `${topAlert.severity === "emergency" ? "EMERGENCY" : topAlert.severity === "warning" ? "WARNING" : "ADVISORY"}: ${topAlert.title}`
+    : overallLevel === "severe"
+    ? "SEVERE RISK — Exercise extreme caution"
+    : overallLevel === "high"
+    ? "HIGH RISK — Stay alert"
+    : overallLevel === "moderate"
+    ? "MODERATE RISK — Stay informed"
+    : "LOW RISK — Conditions are normal";
+
+  const generateAlertMessage = () => {
+    const lines = [
+      `TERRAWATCH ALERT — ${locationName}`,
+      `Risk Level: ${overallMeta.label.toUpperCase()} (${overallScore}/100)`,
+      topAlert ? `Alert: ${topAlert.title}` : "",
+      weather ? `Temp: ${weather.current.temperature}°C | Wind: ${weather.current.windSpeed} km/h | Rain: ${weather.current.rain}mm` : "",
+      `Location: ${lat.toFixed(2)}, ${lon.toFixed(2)}`,
+      "Stay safe. Follow local authority instructions.",
+      "Emergency: 112 | NDMA: 1078 | Ambulance: 108",
+    ].filter(Boolean);
+    return lines.join("\n");
+  };
+
+  const copyAlert = () => {
+    const msg = generateAlertMessage();
+    navigator.clipboard.writeText(msg).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  const weatherDesc = weather ? WEATHER_CODE_MAP[weather.current.weatherCode] ?? "Unknown" : "";
+
+  return (
+    <div className="flex h-full flex-col overflow-hidden">
+      {/* Header */}
+      <div className="flex items-start justify-between border-b border-white/10 px-4 py-3">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <MapPin className="h-4 w-4 text-blue-400 flex-shrink-0" />
+            <h2 className="truncate text-lg font-bold text-white">{locationName}</h2>
+            {isSimulated && <SimulatedBadge />}
+          </div>
+          <p className="mt-0.5 text-xs text-gray-500">
+            {lat.toFixed(4)}°, {lon.toFixed(4)}°
+            {weather && (
+              <span className="ml-2">
+                Updated {new Date(weather.fetchedAt).toLocaleTimeString()}
+              </span>
+            )}
+          </p>
+        </div>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={onToggleWatch}
+            className={`rounded-lg p-1.5 transition-colors ${isWatched ? "text-yellow-400" : "text-gray-500 hover:text-gray-300"}`}
+            title={isWatched ? "Remove from watchlist" : "Add to watchlist"}
+          >
+            <Heart className="h-4 w-4" fill={isWatched ? "currentColor" : "none"} />
+          </button>
+          <button onClick={onClose} className="rounded-lg p-1.5 text-gray-500 hover:bg-white/5 hover:text-white">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Alert Banner */}
+      <div
+        className="px-4 py-2 border-b border-white/10"
+        style={{ backgroundColor: `${overallMeta.color}15` }}
+      >
+        <div className="flex items-center gap-2">
+          <AlertTriangle className="h-4 w-4 flex-shrink-0" style={{ color: overallMeta.color }} />
+          <span className="text-sm font-bold" style={{ color: overallMeta.color }}>{alertBannerText}</span>
+        </div>
+        {topAlert && topAlert.source === "derived" && (
+          <p className="mt-1 text-[10px] text-gray-500">
+            Derived from forecast, not an official warning.{" "}
+            <a href="https://mausam.imd.gov.in/" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">
+              Check IMD
+            </a>
+          </p>
+        )}
+      </div>
+
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4">
+        {weatherLoading && (
+          <div className="flex items-center justify-center py-8">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+            <span className="ml-2 text-sm text-gray-400">Fetching live weather...</span>
+          </div>
+        )}
+
+        {weatherError && !weatherLoading && (
+          <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3">
+            <p className="text-sm text-red-400">Failed to load weather data</p>
+            <p className="text-xs text-gray-500 mt-1">{weatherError}</p>
+            <button onClick={onRetry} className="mt-2 rounded bg-red-500/20 px-3 py-1 text-xs text-red-400 hover:bg-red-500/30">
+              Retry
+            </button>
+          </div>
+        )}
+
+        {/* Current Weather */}
+        {weather && !weatherLoading && (
+          <>
+            <div className="rounded-xl border border-white/10 bg-slate-800/50 p-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-3xl font-bold text-white">{weather.current.temperature.toFixed(0)}°C</span>
+                  <p className="text-sm text-gray-400">{weatherDesc}</p>
+                  <p className="text-xs text-gray-500">Feels like {weather.current.apparentTemperature.toFixed(0)}°C</p>
+                </div>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+                  <WeatherStat icon={Droplets} label="Humidity" value={`${weather.current.humidity.toFixed(0)}%`} />
+                  <WeatherStat icon={Wind} label="Wind" value={`${weather.current.windSpeed.toFixed(0)} km/h`} />
+                  <WeatherStat icon={CloudRain} label="Rain" value={`${weather.current.rain.toFixed(1)} mm`} />
+                  <WeatherStat icon={Gauge} label="Pressure" value={`${weather.current.pressure.toFixed(0)} hPa`} />
+                  <WeatherStat icon={Wind} label="Gusts" value={`${weather.current.windGusts.toFixed(0)} km/h`} />
+                  <WeatherStat icon={Eye} label="Visibility" value={`${(weather.current.visibility / 1000).toFixed(1)} km`} />
+                </div>
+              </div>
+            </div>
+
+            {/* 7-day Forecast Chart */}
+            <div className="rounded-xl border border-white/10 bg-slate-800/50 p-3">
+              <div className="flex gap-1 mb-2">
+                {(["temperature", "rain", "wind"] as const).map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setChartType(t)}
+                    className={`rounded px-2 py-1 text-xs font-medium capitalize transition-colors ${
+                      chartType === t ? "bg-blue-500/20 text-blue-400" : "text-gray-500 hover:text-gray-300"
+                    }`}
+                  >
+                    {t === "temperature" ? "Temp" : t === "rain" ? "Rain" : "Wind"}
+                  </button>
+                ))}
+              </div>
+              <ForecastChart weather={weather} type={chartType} />
+            </div>
+          </>
+        )}
+
+        {/* Risk Gauges */}
+        {risks && (
+          <div className="rounded-xl border border-white/10 bg-slate-800/50 p-3">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-semibold text-white">Risk Assessment</h3>
+              <RiskGauge score={overallScore} level={overallLevel} size={80} />
+            </div>
+            <div className="space-y-1">
+              {HAZARD_ORDER.map((hazard) => {
+                const risk = risks[hazard as keyof FullRiskAssessment] as RiskAssessment;
+                if (!risk) return null;
+                const meta = RISK_LEVEL_META[risk.level];
+                const Icon = getHazardIcon(HAZARD_META[hazard].icon);
+                const isExpanded = expandedHazard === hazard;
+                return (
+                  <div key={hazard} className="rounded-lg bg-slate-900/50">
+                    <button
+                      onClick={() => setExpandedHazard(isExpanded ? null : hazard)}
+                      className="flex w-full items-center gap-2 px-2.5 py-2 text-left"
+                    >
+                      <Icon className="h-4 w-4 flex-shrink-0" style={{ color: meta.color }} />
+                      <span className="flex-1 text-xs font-medium text-gray-200">{HAZARD_META[hazard].label}</span>
+                      <span className="text-xs font-bold" style={{ color: meta.color }}>{risk.score}</span>
+                      <span className="h-1.5 w-16 rounded-full bg-white/10 overflow-hidden">
+                        <span className="block h-full rounded-full" style={{ width: `${risk.score}%`, backgroundColor: meta.color }} />
+                      </span>
+                      {isExpanded ? <ChevronUp className="h-3 w-3 text-gray-500" /> : <ChevronDown className="h-3 w-3 text-gray-500" />}
+                    </button>
+                    {isExpanded && (
+                      <div className="px-2.5 pb-2.5 space-y-1.5">
+                        <div className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-1">Why this score?</div>
+                        {risk.indicators.map((ind, i) => (
+                          <div key={i} className="flex items-start gap-2 text-xs">
+                            <div className="flex-1">
+                              <div className="flex justify-between">
+                                <span className="text-gray-300 font-medium">{ind.name}</span>
+                                <span className="text-gray-400">{ind.value}</span>
+                              </div>
+                              <div className="flex items-center gap-1.5 mt-0.5">
+                                <div className="flex-1 h-1 rounded-full bg-white/5 overflow-hidden">
+                                  <div
+                                    className="h-full rounded-full"
+                                    style={{
+                                      width: `${(ind.contribution / ind.maxContribution) * 100}%`,
+                                      backgroundColor: meta.color,
+                                    }}
+                                  />
+                                </div>
+                                <span className="text-[10px] text-gray-500">{ind.contribution}/{ind.maxContribution}</span>
+                              </div>
+                              <p className="text-[10px] text-gray-600 mt-0.5">{ind.description}</p>
+                            </div>
+                          </div>
+                        ))}
+                        <button
+                          onClick={() => setShowGuidance(showGuidance === hazard ? null : hazard)}
+                          className="mt-1 w-full rounded-lg bg-blue-500/10 px-2 py-1.5 text-xs font-medium text-blue-400 hover:bg-blue-500/20"
+                        >
+                          {showGuidance === hazard ? "Hide" : "Show"} Safety Guidance
+                        </button>
+                      </div>
+                    )}
+                    {showGuidance === hazard && isExpanded && (
+                      <div className="border-t border-white/5 px-2.5 pb-3 pt-2 space-y-2">
+                        <SafetySection title="Before" items={SAFETY_GUIDANCE[hazard].before} icon={Shield} color="text-blue-400" />
+                        <SafetySection title="During" items={SAFETY_GUIDANCE[hazard].during} icon={AlertTriangle} color="text-orange-400" />
+                        <SafetySection title="After" items={SAFETY_GUIDANCE[hazard].after} icon={Check} color="text-green-400" />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Alerts for this location */}
+        {alerts.length > 0 && (
+          <div className="rounded-xl border border-white/10 bg-slate-800/50 p-3">
+            <h3 className="text-sm font-semibold text-white mb-2">Active Alerts ({alerts.length})</h3>
+            <div className="space-y-2">
+              {alerts.map((alert) => (
+                <div key={alert.id} className="rounded-lg bg-slate-900/60 p-2.5 border border-white/5">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="text-xs font-semibold text-white flex-1">{alert.title}</span>
+                    <SeverityBadge severity={alert.severity} />
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">{alert.description}</p>
+                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                    <SourceBadge source={alert.source} />
+                    <span className="text-[10px] text-gray-600 flex items-center gap-0.5">
+                      <Clock className="h-2.5 w-2.5" />
+                      {new Date(alert.time).toLocaleString()}
+                    </span>
+                  </div>
+                  {alert.sourceUrl && (
+                    <a href={alert.sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex items-center gap-1 text-[10px] text-blue-400 hover:underline">
+                      Source <ExternalLink className="h-2.5 w-2.5" />
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Selected Event Details */}
+        {selectedEvent && (
+          <div className="rounded-xl border border-orange-500/30 bg-orange-500/5 p-3">
+            <h3 className="text-sm font-semibold text-white mb-2 flex items-center gap-1.5">
+              <AlertTriangle className="h-4 w-4 text-orange-400" />
+              Event Details
+            </h3>
+            <div className="space-y-1.5 text-xs">
+              <DetailRow label="Type" value={HAZARD_META[selectedEvent.type].label} />
+              <DetailRow label="Severity" value={selectedEvent.severity} />
+              <DetailRow label="Location" value={selectedEvent.location} />
+              <DetailRow label="Time" value={new Date(selectedEvent.time).toLocaleString()} />
+              {selectedEvent.magnitude && <DetailRow label="Magnitude" value={`M${selectedEvent.magnitude.toFixed(1)}`} />}
+              {selectedEvent.depth && <DetailRow label="Depth" value={`${selectedEvent.depth.toFixed(0)} km`} />}
+              {selectedEvent.tsunamiWarning && (
+                <div className="rounded bg-red-500/20 px-2 py-1 text-xs font-bold text-red-400">
+                  TSUNAMI WARNING ACTIVE
+                </div>
+              )}
+              {selectedEvent.affectedArea && <DetailRow label="Affected Area" value={selectedEvent.affectedArea} />}
+              {selectedEvent.affectedPopulation && <DetailRow label="Affected Pop." value={selectedEvent.affectedPopulation} />}
+              {selectedEvent.sourceUrl && (
+                <a href={selectedEvent.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-blue-400 hover:underline mt-1">
+                  Source link <ExternalLink className="h-3 w-3" />
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Emergency Contacts */}
+        <div className="rounded-xl border border-white/10 bg-slate-800/50 p-3">
+          <h3 className="text-sm font-semibold text-white mb-2 flex items-center gap-1.5">
+            <Phone className="h-4 w-4 text-red-400" />
+            Emergency Contacts (India)
+          </h3>
+          <div className="grid grid-cols-2 gap-2">
+            {EMERGENCY_CONTACTS.map((c) => (
+              <div key={c.number} className="rounded-lg bg-slate-900/60 p-2">
+                <div className="text-lg font-bold text-red-400">{c.number}</div>
+                <div className="text-[10px] text-gray-400">{c.name}</div>
+                <div className="text-[9px] text-gray-600">{c.description}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Nearby Emergency Services */}
+        <div className="rounded-xl border border-white/10 bg-slate-800/50 p-3">
+          <h3 className="text-sm font-semibold text-white mb-2 flex items-center gap-1.5">
+            <Navigation className="h-4 w-4 text-blue-400" />
+            Nearby Emergency Services
+          </h3>
+          <p className="text-[10px] text-gray-500 mb-3">Search for emergency services near your selected location on Google Maps</p>
+          <div className="grid grid-cols-2 gap-2">
+            {NEARBY_EMERGENCY_SERVICES.map((svc) => {
+              const Icon = SERVICE_ICON_MAP[svc.icon] ?? Plus;
+              const mapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(svc.searchQuery)}`;
+              return (
+                <a
+                  key={svc.id}
+                  href={mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-lg bg-slate-900/60 p-2.5 hover:bg-slate-900/90 transition-colors group"
+                >
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span
+                      className="flex h-6 w-6 items-center justify-center rounded"
+                      style={{ backgroundColor: `${svc.color}20`, border: `1px solid ${svc.color}40` }}
+                    >
+                      <Icon className="h-3.5 w-3.5" style={{ color: svc.color }} />
+                    </span>
+                    <span className="text-xs font-semibold text-white">{svc.name}</span>
+                  </div>
+                  <p className="text-[10px] text-gray-400 mb-1.5">{svc.description}</p>
+                  <div className="flex items-center justify-between">
+                    {svc.number ? (
+                      <span className="text-xs font-bold" style={{ color: svc.color }}>{svc.number}</span>
+                    ) : (
+                      <span className="text-[10px] text-gray-600">No hotline</span>
+                    )}
+                    <span className="flex items-center gap-0.5 text-[10px] text-blue-400 group-hover:text-blue-300">
+                      <Search className="h-2.5 w-2.5" />
+                      Find
+                    </span>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Authority Response Guidance */}
+        {overallLevel !== "low" && (
+          <div className="rounded-xl border border-white/10 bg-slate-800/50 p-3">
+            <h3 className="text-sm font-semibold text-white mb-2 flex items-center gap-1.5">
+              <Building2 className="h-4 w-4 text-blue-400" />
+              Authority Response Guidance
+            </h3>
+            <div className="space-y-2 text-xs text-gray-400">
+              <div>
+                <span className="font-semibold text-orange-400">Evacuation Priority:</span>{" "}
+                {overallLevel === "severe" ? "Immediate — evacuate all low-lying and coastal areas" : overallLevel === "high" ? "High — prepare evacuation of vulnerable populations" : "Monitor — standby for evacuation orders"}
+              </div>
+              <div>
+                <span className="font-semibold text-blue-400">Resource Deployment:</span>
+                <ul className="mt-1 space-y-0.5 pl-3">
+                  <li>- NDRF teams on standby</li>
+                  <li>- Emergency supplies pre-positioned</li>
+                  <li>- Communication equipment checked</li>
+                  <li>- Transport vehicles ready</li>
+                </ul>
+              </div>
+              <div>
+                <span className="font-semibold text-green-400">Shelter & Hospital Readiness:</span>
+                <ul className="mt-1 space-y-0.5 pl-3">
+                  <li>- Shelters identified and stocked</li>
+                  <li>- Hospital emergency protocols activated</li>
+                  <li>- Blood bank inventory checked</li>
+                  <li>- Ambulance dispatch ready</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Copy Alert */}
+        <button
+          onClick={copyAlert}
+          className="w-full rounded-xl bg-blue-500/10 border border-blue-500/30 px-4 py-2.5 text-sm font-medium text-blue-400 hover:bg-blue-500/20 transition-colors flex items-center justify-center gap-2"
+        >
+          {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+          {copied ? "Copied to clipboard!" : "Copy Alert Message (SMS/WhatsApp)"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function WeatherStat({ icon: Icon, label, value }: { icon: typeof Wind; label: string; value: string }) {
+  return (
+    <div className="flex items-center gap-1">
+      <Icon className="h-3 w-3 text-gray-500" />
+      <span className="text-gray-500">{label}:</span>
+      <span className="font-medium text-gray-200">{value}</span>
+    </div>
+  );
+}
+
+function SafetySection({ title, items, icon: Icon, color }: { title: string; items: string[]; icon: typeof Shield; color: string }) {
+  return (
+    <div>
+      <div className={`flex items-center gap-1 text-xs font-semibold ${color} mb-0.5`}>
+        <Icon className="h-3 w-3" />
+        {title}
+      </div>
+      <ul className="space-y-0.5 pl-4">
+        {items.map((item, i) => (
+          <li key={i} className="text-[11px] text-gray-400 list-disc">{item}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between">
+      <span className="text-gray-500">{label}:</span>
+      <span className="text-gray-200 font-medium capitalize">{value}</span>
+    </div>
+  );
+}
+
+
+//=== FILE: src/components/panels/SimulationControls.tsx ===
+import { Play, Pause, RotateCcw, SkipBack, SkipForward, Clock } from "lucide-react";
+import { useEffect, useRef } from "react";
+import type { ScenarioId, TimelineFrame } from "@/types";
+import { SCENARIO_LIST } from "@/data/scenarios";
+import { SimulatedBadge } from "@/components/ui/AlertBadge";
+
+interface SimulationControlsProps {
+  scenarioId: ScenarioId;
+  onScenarioChange: (id: ScenarioId) => void;
+  currentHour: number;
+  onHourChange: (hour: number) => void;
+  isPlaying: boolean;
+  onPlayPause: () => void;
+  timeline: TimelineFrame[];
+}
+
+export default function SimulationControls({
+  scenarioId,
+  onScenarioChange,
+  currentHour,
+  onHourChange,
+  isPlaying,
+  onPlayPause,
+  timeline,
+}: SimulationControlsProps) {
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (isPlaying && timeline.length > 0) {
+      intervalRef.current = setInterval(() => {
+        onHourChange(Math.min(currentHour + 1, timeline.length - 1));
+      }, 1000);
+    }
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [isPlaying, currentHour, timeline.length, onHourChange]);
+
+  const maxHour = timeline.length > 0 ? timeline.length - 1 : 0;
+  const currentFrame = timeline[currentHour];
+
+  return (
+    <div className="rounded-xl border border-orange-500/30 bg-slate-900/80 backdrop-blur-xl p-3 space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold text-white">Simulation</span>
+          <SimulatedBadge />
+        </div>
+      </div>
+
+      {/* Scenario selector */}
+      <div className="flex flex-wrap gap-1.5">
+        {SCENARIO_LIST.map((s) => (
+          <button
+            key={s.id}
+            onClick={() => onScenarioChange(s.id)}
+            className={`rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${
+              scenarioId === s.id
+                ? "bg-orange-500/20 text-orange-400 border border-orange-500/40"
+                : "bg-white/5 text-gray-400 hover:text-white border border-transparent"
+            }`}
+            title={s.description}
+          >
+            {s.name}
+          </button>
+        ))}
+      </div>
+
+      {scenarioId !== "live" && timeline.length > 0 && (
+        <>
+          {/* Time slider */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-gray-400 flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                {currentFrame?.label ?? `T+${currentHour}h`}
+              </span>
+              <span className="text-gray-600">{currentHour} / {maxHour}h</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => onHourChange(0)}
+                className="rounded p-1 text-gray-400 hover:bg-white/5"
+                title="Reset"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+              </button>
+              <button
+                onClick={() => onHourChange(Math.max(0, currentHour - 1))}
+                className="rounded p-1 text-gray-400 hover:bg-white/5"
+              >
+                <SkipBack className="h-3.5 w-3.5" />
+              </button>
+              <button
+                onClick={onPlayPause}
+                className="rounded-lg bg-orange-500/20 p-1.5 text-orange-400 hover:bg-orange-500/30"
+              >
+                {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+              </button>
+              <button
+                onClick={() => onHourChange(Math.min(maxHour, currentHour + 1))}
+                className="rounded p-1 text-gray-400 hover:bg-white/5"
+              >
+                <SkipForward className="h-3.5 w-3.5" />
+              </button>
+              <input
+                type="range"
+                min={0}
+                max={maxHour}
+                value={currentHour}
+                onChange={(e) => onHourChange(Number(e.target.value))}
+                className="flex-1 h-1.5 rounded-full bg-white/10 accent-orange-500 cursor-pointer"
+              />
+            </div>
+          </div>
+
+          {/* Current frame info */}
+          {currentFrame && (
+            <div className="rounded-lg bg-slate-800/50 p-2 grid grid-cols-3 gap-2 text-[10px]">
+              {currentFrame.weather.temperature !== undefined && (
+                <FrameStat label="Temp" value={`${currentFrame.weather.temperature.toFixed(0)}°C`} />
+              )}
+              {currentFrame.weather.windSpeed !== undefined && (
+                <FrameStat label="Wind" value={`${currentFrame.weather.windSpeed.toFixed(0)} km/h`} />
+              )}
+              {currentFrame.weather.rain !== undefined && (
+                <FrameStat label="Rain" value={`${currentFrame.weather.rain.toFixed(1)} mm`} />
+              )}
+              {currentFrame.weather.windGusts !== undefined && (
+                <FrameStat label="Gusts" value={`${currentFrame.weather.windGusts.toFixed(0)} km/h`} />
+              )}
+              {currentFrame.weather.pressure !== undefined && (
+                <FrameStat label="Pressure" value={`${currentFrame.weather.pressure.toFixed(0)} hPa`} />
+              )}
+              {currentFrame.alertLevel && (
+                <FrameStat
+                  label="Risk"
+                  value={currentFrame.alertLevel.toUpperCase()}
+                  color={currentFrame.alertLevel === "severe" ? "#ef4444" : currentFrame.alertLevel === "high" ? "#f97316" : currentFrame.alertLevel === "moderate" ? "#eab308" : "#22c55e"}
+                />
+              )}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+function FrameStat({ label, value, color }: { label: string; value: string; color?: string }) {
+  return (
+    <div className="flex flex-col items-center">
+      <span className="text-gray-600 uppercase">{label}</span>
+      <span className="font-bold" style={{ color: color ?? "#e2e8f0" }}>{value}</span>
+    </div>
+  );
+}
+
+
+//=== FILE: src/components/ui/AlertBadge.tsx ===
+import type { AlertSeverity, RiskLevel, AlertSource } from "@/types";
+import { SEVERITY_META, RISK_LEVEL_META } from "@/data/cities";
+
+interface AlertBadgeProps {
+  severity?: AlertSeverity;
+  level?: RiskLevel;
+  source?: AlertSource;
+  size?: "sm" | "md";
+}
+
+export function SeverityBadge({ severity, size = "sm" }: { severity: AlertSeverity; size?: "sm" | "md" }) {
+  const meta = SEVERITY_META[severity];
+  const sizes = size === "sm" ? "px-2 py-0.5 text-[10px]" : "px-3 py-1 text-xs";
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full font-semibold uppercase tracking-wide ${sizes}`}
+      style={{ backgroundColor: `${meta.color}25`, color: meta.color, border: `1px solid ${meta.color}50` }}
+    >
+      {meta.label}
+    </span>
+  );
+}
+
+export function RiskBadge({ level, size = "sm" }: { level: RiskLevel; size?: "sm" | "md" }) {
+  const meta = RISK_LEVEL_META[level];
+  const sizes = size === "sm" ? "px-2 py-0.5 text-[10px]" : "px-3 py-1 text-xs";
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full font-semibold uppercase tracking-wide ${sizes}`}
+      style={{ backgroundColor: `${meta.color}25`, color: meta.color, border: `1px solid ${meta.color}50` }}
+    >
+      {meta.label}
+    </span>
+  );
+}
+
+export function SourceBadge({ source }: { source: AlertSource }) {
+  const labels: Record<AlertSource, string> = {
+    "open-meteo": "Open-Meteo",
+    usgs: "USGS",
+    eonet: "NASA EONET",
+    nws: "NWS",
+    gdacs: "GDACS",
+    derived: "Derived",
+    simulation: "Simulated",
+  };
+  const colors: Record<AlertSource, string> = {
+    "open-meteo": "#3b82f6",
+    usgs: "#f59e0b",
+    eonet: "#10b981",
+    nws: "#8b5cf6",
+    gdacs: "#06b6d4",
+    derived: "#ec4899",
+    simulation: "#f97316",
+  };
+  const c = colors[source];
+  return (
+    <span
+      className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wide"
+      style={{ backgroundColor: `${c}20`, color: c }}
+    >
+      {labels[source]}
+    </span>
+  );
+}
+
+export function SimulatedBadge() {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-orange-500/20 px-3 py-1 text-xs font-bold uppercase tracking-wide text-orange-400 border border-orange-500/40">
+      SIMULATED
+    </span>
+  );
+}
+
+export default function AlertBadge({ severity, level, source }: AlertBadgeProps) {
+  return (
+    <div className="flex flex-wrap items-center gap-1.5">
+      {severity && <SeverityBadge severity={severity} />}
+      {level && <RiskBadge level={level} />}
+      {source && <SourceBadge source={source} />}
+    </div>
+  );
+}
+
+
+//=== FILE: src/components/ui/CitySearch.tsx ===
+import { useState, useEffect, useRef } from "react";
+import { Search, MapPin, Loader2 } from "lucide-react";
+import { searchCity, type GeoResult } from "@/lib/api";
+
+interface CitySearchProps {
+  onResult: (result: GeoResult) => void;
+}
+
+export default function CitySearch({ onResult }: CitySearchProps) {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<GeoResult[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    if (query.length < 2) {
+      setResults([]);
+      return;
+    }
+    setLoading(true);
+    timerRef.current = setTimeout(async () => {
+      const res = await searchCity(query);
+      setResults(res);
+      setLoading(false);
+      setOpen(true);
+    }, 400);
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, [query]);
+
+  const handleSelect = (r: GeoResult) => {
+    onResult(r);
+    setQuery(`${r.name}, ${r.country}`);
+    setOpen(false);
+  };
+
+  return (
+    <div className="relative w-full">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => results.length > 0 && setOpen(true)}
+          onBlur={() => setTimeout(() => setOpen(false), 200)}
+          placeholder="Search city..."
+          className="w-full rounded-lg border border-white/10 bg-slate-900/80 pl-9 pr-3 py-2 text-sm text-white placeholder-gray-500 outline-none focus:border-blue-500/50"
+        />
+        {loading && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-gray-400" />}
+      </div>
+      {open && results.length > 0 && (
+        <div className="absolute z-50 mt-1 w-full rounded-lg border border-white/10 bg-slate-900/95 backdrop-blur-xl shadow-2xl max-h-60 overflow-y-auto">
+          {results.map((r, i) => (
+            <button
+              key={`${r.name}-${i}`}
+              onClick={() => handleSelect(r)}
+              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-gray-200 hover:bg-white/5"
+            >
+              <MapPin className="h-3.5 w-3.5 text-blue-400 flex-shrink-0" />
+              <span className="font-medium">{r.name}</span>
+              <span className="text-gray-500">{r.country}{r.admin1 ? `, ${r.admin1}` : ""}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+//=== FILE: src/components/ui/ForecastChart.tsx ===
+import { useMemo } from "react";
+import type { WeatherData } from "@/types";
+
+interface ForecastChartProps {
+  weather: WeatherData;
+  type: "temperature" | "rain" | "wind";
+}
+
+export default function ForecastChart({ weather, type }: ForecastChartProps) {
+  const data = useMemo(() => {
+    if (type === "temperature") {
+      return {
+        values: weather.daily.temperatureMax.slice(0, 7),
+        mins: weather.daily.temperatureMin.slice(0, 7),
+        label: "Temperature (°C)",
+        color: "#f59e0b",
+        minColor: "#3b82f6",
+      };
+    }
+    if (type === "rain") {
+      return {
+        values: weather.daily.precipitationSum.slice(0, 7),
+        mins: undefined,
+        label: "Rain (mm)",
+        color: "#06b6d4",
+        minColor: undefined,
+      };
+    }
+    return {
+      values: weather.daily.windGustsMax.slice(0, 7),
+      mins: undefined,
+      label: "Wind Gusts (km/h)",
+      color: "#10b981",
+      minColor: undefined,
+    };
+  }, [weather, type]);
+
+  const max = Math.max(...data.values, ...(data.mins ?? [0]), 1) * 1.2;
+  const width = 320;
+  const height = 120;
+  const padding = 30;
+  const chartW = width - padding * 2;
+  const chartH = height - padding;
+  const barW = chartW / 7 - 6;
+
+  return (
+    <div className="w-full">
+      <div className="mb-2 text-xs font-medium text-gray-400">{data.label} — 7-day forecast</div>
+      <svg width="100%" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet">
+        {[0, 0.25, 0.5, 0.75, 1].map((t) => (
+          <line
+            key={t}
+            x1={padding}
+            x2={width - padding}
+            y1={padding + chartH * (1 - t)}
+            y2={padding + chartH * (1 - t)}
+            stroke="currentColor"
+            strokeWidth="0.5"
+            className="text-white/10"
+          />
+        ))}
+        {data.values.map((v, i) => {
+          const h = (v / max) * chartH;
+          const x = padding + i * (barW + 6);
+          const y = padding + chartH - h;
+          const date = new Date(weather.daily.time?.[i] ?? weather.daily.time?.[0] ?? new Date().toISOString());
+          const dayLabel = date.toLocaleDateString("en", { weekday: "short" });
+          return (
+            <g key={i}>
+              <rect x={x} y={y} width={barW} height={h} fill={data.color} rx={3} opacity={0.8} />
+              {data.mins && (
+                <rect
+                  x={x}
+                  y={padding + chartH - (data.mins[i] / max) * chartH}
+                  width={barW}
+                  height={(data.mins[i] / max) * chartH}
+                  fill={data.minColor}
+                  rx={3}
+                  opacity={0.5}
+                />
+              )}
+              <text x={x + barW / 2} y={height - 4} textAnchor="middle" fontSize="8" fill="currentColor" className="text-gray-500">
+                {dayLabel}
+              </text>
+              <text x={x + barW / 2} y={y - 4} textAnchor="middle" fontSize="8" fill={data.color} fontWeight="bold">
+                {v.toFixed(type === "rain" ? 0 : 0)}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+
+//=== FILE: src/components/ui/GlassPanel.tsx ===
+interface GlassPanelProps {
+  children: React.ReactNode;
+  className?: string;
+  onClick?: () => void;
+}
+
+export function GlassPanel({ children, className = "", onClick }: GlassPanelProps) {
+  return (
+    <div
+      onClick={onClick}
+      className={`rounded-xl border border-white/10 bg-slate-900/60 backdrop-blur-xl shadow-2xl ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+export function Panel({ children, className = "", onClick }: GlassPanelProps) {
+  return (
+    <div
+      onClick={onClick}
+      className={`rounded-xl border border-slate-200 bg-white/80 backdrop-blur-xl shadow-lg ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+
+//=== FILE: src/components/ui/HazardIcon.tsx ===
+import {
+  Waves, ThermometerSun, Wind, CloudRain, Activity, Flame, Mountain,
+  TrendingDown, Sun, Snowflake, type LucideIcon,
+} from "lucide-react";
+import type { HazardType } from "@/types";
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  Waves, ThermometerSun, Wind, CloudRain, Activity, Flame, Mountain,
+  TrendingDown, Sun, Snowflake,
+};
+
+export function getHazardIcon(name: string): LucideIcon {
+  return ICON_MAP[name] ?? Activity;
+}
+
+
+//=== FILE: src/components/ui/LayerToggles.tsx ===
+import { Waves, ThermometerSun, Wind, CloudRain, Activity, Flame, Mountain, TrendingDown, Sun, Snowflake, AlertCircle, type LucideIcon } from "lucide-react";
+
+export interface LayerToggle {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  color: string;
+  enabled: boolean;
+}
+
+export const LAYER_DEFINITIONS: Omit<LayerToggle, "enabled">[] = [
+  { id: "flood", label: "Flood Risk", icon: Waves, color: "#06b6d4" },
+  { id: "heatwave", label: "Heatwave", icon: ThermometerSun, color: "#f59e0b" },
+  { id: "cyclone", label: "Cyclone/Wind", icon: Wind, color: "#8b5cf6" },
+  { id: "extremeRainfall", label: "Extreme Rainfall", icon: CloudRain, color: "#3b82f6" },
+  { id: "earthquake", label: "Earthquakes", icon: Activity, color: "#ef4444" },
+  { id: "wildfire", label: "Wildfires", icon: Flame, color: "#f97316" },
+  { id: "volcano", label: "Volcanoes", icon: Mountain, color: "#dc2626" },
+  { id: "landslide", label: "Landslides", icon: TrendingDown, color: "#a78bfa" },
+  { id: "drought", label: "Drought", icon: Sun, color: "#eab308" },
+  { id: "coldWave", label: "Cold Wave", icon: Snowflake, color: "#60a5fa" },
+  { id: "officialAlerts", label: "Official Alerts", icon: AlertCircle, color: "#10b981" },
+];
+
+interface LayerTogglesProps {
+  layers: Record<string, boolean>;
+  onToggle: (id: string) => void;
+}
+
+export default function LayerToggles({ layers, onToggle }: LayerTogglesProps) {
+  return (
+    <div className="space-y-1">
+      <div className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Layers</div>
+      {LAYER_DEFINITIONS.map((layer) => {
+        const enabled = layers[layer.id] ?? true;
+    const Icon = layer.icon;
+        return (
+          <button
+            key={layer.id}
+            onClick={() => onToggle(layer.id)}
+            className={`flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
+              enabled ? "bg-white/5 text-gray-200" : "text-gray-600 hover:bg-white/5"
+            }`}
+          >
+            <span
+              className="flex h-5 w-5 items-center justify-center rounded"
+              style={{ backgroundColor: enabled ? `${layer.color}25` : "transparent", border: `1px solid ${enabled ? layer.color : "#333"}` }}
+            >
+              <Icon className="h-3 w-3" style={{ color: enabled ? layer.color : "#666" }} />
+            </span>
+            <span className="flex-1 text-left">{layer.label}</span>
+            <span
+              className="h-4 w-7 rounded-full transition-colors relative"
+              style={{ backgroundColor: enabled ? layer.color : "#333" }}
+            >
+              <span
+                className="absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all"
+                style={{ left: enabled ? "14px" : "2px" }}
+              />
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+
+//=== FILE: src/components/ui/RiskGauge.tsx ===
+import type { RiskLevel } from "@/types";
+import { RISK_LEVEL_META } from "@/data/cities";
+
+interface RiskGaugeProps {
+  score: number;
+  level: RiskLevel;
+  size?: number;
+  label?: string;
+}
+
+export default function RiskGauge({ score, level, size = 120, label }: RiskGaugeProps) {
+  const meta = RISK_LEVEL_META[level];
+  const radius = (size - 16) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (score / 100) * circumference;
+
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <div className="relative" style={{ width: size, height: size }}>
+        <svg width={size} height={size} className="transform -rotate-90">
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="8"
+            className="text-white/10"
+          />
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke={meta.color}
+            strokeWidth="8"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            strokeLinecap="round"
+            style={{ transition: "stroke-dashoffset 0.8s ease" }}
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-2xl font-bold" style={{ color: meta.color }}>{score}</span>
+          <span className="text-xs text-gray-400">/ 100</span>
+        </div>
+      </div>
+      {label && <span className="text-xs font-medium" style={{ color: meta.color }}>{meta.label}</span>}
+    </div>
+  );
+}
+
+
